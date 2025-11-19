@@ -6,6 +6,8 @@ import { Button } from './ui/button';
 
 export const Layout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
@@ -13,6 +15,11 @@ export const Layout = ({ children }) => {
     { name: 'Casos', path: '/cases', icon: FileText },
     { name: 'Painel Suporte', path: '/support', icon: Headphones },
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen flex">
