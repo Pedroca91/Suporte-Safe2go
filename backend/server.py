@@ -110,10 +110,88 @@ class ChartData(BaseModel):
     completed: int
     pending: int
 
+# Auth Helper Functions
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
+def create_token(user_id: str) -> str:
+    payload = {
+        'user_id': user_id,
+        'exp': datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    try:
+        token = credentials.credentials
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get('user_id')
+        
+        user = await db.users.find_one({'id': user_id}, {'_id': 0, 'password': 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="Usuário não encontrado")
+        
+        if isinstance(user.get('created_at'), str):
+            user['created_at'] = datetime.fromisoformat(user['created_at'])
+        
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expirado")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Token inválido")
+
 # Routes
 @api_router.get("/")
 async def root():
     return {"message": "Sistema de Gerenciamento de Suporte"}
+
+# Auth Routes
+@api_router.post("/auth/register", response_model=AuthResponse)
+async def register(user_data: UserRegister):
+    # Check if user exists
+    existing_user = await db.users.find_one({'email': user_data.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email já cadastrado")
+    
+    # Create user
+    user = User(name=user_data.name, email=user_data.email)
+    user_doc = user.model_dump()
+    user_doc['password'] = hash_password(user_data.password)
+    user_doc['created_at'] = user_doc['created_at'].isoformat()
+    
+    await db.users.insert_one(user_doc)
+    
+    # Generate token
+    token = create_token(user.id)
+    
+    return AuthResponse(token=token, user=user)
+
+@api_router.post("/auth/login", response_model=AuthResponse)
+async def login(credentials: UserLogin):
+    user_doc = await db.users.find_one({'email': credentials.email})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Email ou senha incorretos")
+    
+    if not verify_password(credentials.password, user_doc['password']):
+        raise HTTPException(status_code=401, detail="Email ou senha incorretos")
+    
+    # Convert to User model (exclude password)
+    user_doc.pop('password', None)
+    user_doc.pop('_id', None)
+    if isinstance(user_doc['created_at'], str):
+        user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
+    
+    user = User(**user_doc)
+    token = create_token(user.id)
+    
+    return AuthResponse(token=token, user=user)
+
+@api_router.get("/auth/me", response_model=User)
+async def get_me(current_user: dict = Depends(get_current_user)):
+    return User(**current_user)
 
 # Cases CRUD
 @api_router.post("/cases", response_model=Case)
