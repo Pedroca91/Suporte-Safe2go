@@ -299,6 +299,7 @@ async def get_dashboard_stats():
     total = await db.cases.count_documents({})
     completed = await db.cases.count_documents({"status": "Concluído"})
     pending = await db.cases.count_documents({"status": "Pendente"})
+    waiting_client = await db.cases.count_documents({"status": "Aguardando resposta do cliente"})
     
     percentage = (completed / total * 100) if total > 0 else 0
     
@@ -306,6 +307,7 @@ async def get_dashboard_stats():
         total_cases=total,
         completed_cases=completed,
         pending_cases=pending,
+        waiting_client_cases=waiting_client,
         completion_percentage=round(percentage, 1)
     )
 
