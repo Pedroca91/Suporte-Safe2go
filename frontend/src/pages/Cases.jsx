@@ -33,6 +33,15 @@ export const Cases = () => {
     fetchCases();
   }, []);
 
+  // Recarregar casos quando a página receber foco
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchCases();
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
   useEffect(() => {
     filterCases();
   }, [cases, searchTerm, statusFilter, responsibleFilter]);
