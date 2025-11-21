@@ -22,6 +22,9 @@ export const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    // Recarregar dados a cada 10 segundos para garantir atualização
+    const interval = setInterval(fetchDashboardData, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDashboardData = async () => {
