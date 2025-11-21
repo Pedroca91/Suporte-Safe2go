@@ -269,6 +269,7 @@ export const Cases = () => {
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
                 <SelectItem value="Concluído">Concluído</SelectItem>
+                <SelectItem value="Aguardando resposta do cliente">Aguardando resposta do cliente</SelectItem>
               </SelectContent>
             </Select>
           </div>
