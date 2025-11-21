@@ -103,6 +103,7 @@ class DashboardStats(BaseModel):
     total_cases: int
     completed_cases: int
     pending_cases: int
+    waiting_client_cases: int
     completion_percentage: float
 
 class ChartData(BaseModel):
