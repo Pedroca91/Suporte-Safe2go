@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 12px 24px rgba(147, 51, 234, 0.15);
 }
 
 .btn-primary {
