@@ -90,7 +90,7 @@ export const Cases = () => {
     try {
       if (editingCase) {
         await axios.put(`${API}/cases/${editingCase.id}`, formData);
-        toast.success('Caso atualizado com sucesso!');
+        toast.success('✅ Caso atualizado e salvo no banco de dados!');
       } else {
         await axios.post(`${API}/cases`, formData);
         toast.success('Caso criado com sucesso!');
