@@ -146,7 +146,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 # Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Sistema de Gerenciamento de Suporte"}
+    return {"message": "Suporte Safe2Go - Sistema de Gerenciamento"}
 
 # Auth Routes
 @api_router.post("/auth/register", response_model=AuthResponse)
