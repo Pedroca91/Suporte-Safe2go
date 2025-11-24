@@ -311,12 +311,22 @@ async def get_dashboard_stats():
     
     percentage = (completed / total * 100) if total > 0 else 0
     
+    # Contar casos por seguradora
+    cases_by_seguradora = {}
+    all_cases = await db.cases.find({}, {"_id": 0, "seguradora": 1}).to_list(1000)
+    for case in all_cases:
+        seguradora = case.get('seguradora', 'Não especificada')
+        if not seguradora:
+            seguradora = 'Não especificada'
+        cases_by_seguradora[seguradora] = cases_by_seguradora.get(seguradora, 0) + 1
+    
     return DashboardStats(
         total_cases=total,
         completed_cases=completed,
         pending_cases=pending,
         waiting_client_cases=waiting_client,
-        completion_percentage=round(percentage, 1)
+        completion_percentage=round(percentage, 1),
+        cases_by_seguradora=cases_by_seguradora
     )
 
 @api_router.get("/dashboard/charts", response_model=List[ChartData])
