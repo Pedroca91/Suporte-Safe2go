@@ -216,6 +216,22 @@ export const Cases = () => {
                 />
               </div>
               <div>
+                <Label htmlFor="seguradora">Seguradora</Label>
+                <Select
+                  value={formData.seguradora}
+                  onValueChange={(value) => setFormData({ ...formData, seguradora: value })}
+                >
+                  <SelectTrigger data-testid="seguradora-select">
+                    <SelectValue placeholder="Selecione a seguradora" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AVLA">AVLA</SelectItem>
+                    <SelectItem value="DAYCOVAL">DAYCOVAL</SelectItem>
+                    <SelectItem value="ESSOR">ESSOR</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
                 <Label htmlFor="status">Status</Label>
                 <Select
                   value={formData.status}
