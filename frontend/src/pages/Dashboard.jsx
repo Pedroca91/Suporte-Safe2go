@@ -80,6 +80,20 @@ export const Dashboard = () => {
       pdf.text(`Casos Pendentes: ${stats.pending_cases}`, 20, 90);
       pdf.text(`Taxa de Conclusão: ${stats.completion_percentage}%`, 20, 100);
       
+      // Casos por Seguradora
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Casos por Seguradora:', 20, 115);
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      
+      let yPos = 125;
+      const seguradoras = stats.cases_by_seguradora || {};
+      Object.keys(seguradoras).forEach((seguradora) => {
+        pdf.text(`${seguradora}: ${seguradoras[seguradora]} casos`, 20, yPos);
+        yPos += 10;
+      });
+      
       // Chart capture
       const chartElement = document.getElementById('dashboard-charts');
       if (chartElement) {
