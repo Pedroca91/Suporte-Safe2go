@@ -108,6 +108,7 @@ class DashboardStats(BaseModel):
     pending_cases: int
     waiting_client_cases: int
     completion_percentage: float
+    cases_by_seguradora: dict = {}
 
 class ChartData(BaseModel):
     date: str
