@@ -58,6 +58,7 @@ class Case(BaseModel):
     description: str
     responsible: str
     status: str  # Concluído, Pendente
+    seguradora: Optional[str] = None  # AVLA, DAYCOVAL, ESSOR
     opened_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     closed_date: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
