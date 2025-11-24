@@ -79,6 +79,7 @@ class CaseUpdate(BaseModel):
     description: Optional[str] = None
     responsible: Optional[str] = None
     status: Optional[str] = None
+    seguradora: Optional[str] = None
     opened_date: Optional[datetime] = None
     closed_date: Optional[datetime] = None
 
