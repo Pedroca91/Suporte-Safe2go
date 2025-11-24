@@ -27,6 +27,7 @@ export const Cases = () => {
     description: '',
     responsible: '',
     status: 'Pendente',
+    seguradora: '',
   });
 
   useEffect(() => {
