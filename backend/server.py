@@ -111,6 +111,10 @@ class ChartData(BaseModel):
     completed: int
     pending: int
 
+class JiraWebhookPayload(BaseModel):
+    webhookEvent: str
+    issue: dict
+
 # Auth Helper Functions
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
