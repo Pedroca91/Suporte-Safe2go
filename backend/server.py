@@ -350,6 +350,84 @@ async def get_chart_data():
     
     return chart_data
 
+# Webhook do Jira
+@api_router.post("/webhooks/jira")
+async def jira_webhook(payload: dict):
+    try:
+        # Verificar se é um evento de criação de issue
+        webhook_event = payload.get('webhookEvent', '')
+        
+        if 'issue' not in payload:
+            return {"status": "ignored", "reason": "No issue data"}
+        
+        issue = payload['issue']
+        issue_key = issue.get('key', '')
+        fields = issue.get('fields', {})
+        
+        # Extrair dados do Jira
+        title = fields.get('summary', 'Sem título')
+        description = fields.get('description', '')
+        
+        # Se description é um objeto (formato Jira moderno), extrair texto
+        if isinstance(description, dict):
+            description = description.get('content', [{}])[0].get('content', [{}])[0].get('text', 'Sem descrição')
+        elif not description:
+            description = 'Sem descrição'
+        
+        # Pegar assignee (responsável)
+        assignee = fields.get('assignee', {})
+        responsible = assignee.get('displayName', 'Equipe Suporte') if assignee else 'Equipe Suporte'
+        
+        # Mapear status do Jira para nosso sistema
+        status_jira = fields.get('status', {}).get('name', 'To Do')
+        status_map = {
+            'To Do': 'Pendente',
+            'In Progress': 'Pendente',
+            'Done': 'Concluído',
+            'Closed': 'Concluído',
+            'Aguardando Cliente': 'Aguardando resposta do cliente',
+            'Waiting for Customer': 'Aguardando resposta do cliente',
+        }
+        status = status_map.get(status_jira, 'Pendente')
+        
+        # Verificar se o caso já existe
+        existing_case = await db.cases.find_one({'jira_id': issue_key})
+        
+        if existing_case:
+            # Atualizar caso existente
+            update_data = {
+                'title': title,
+                'description': description,
+                'responsible': responsible,
+                'status': status
+            }
+            await db.cases.update_one({'jira_id': issue_key}, {'$set': update_data})
+            logger.info(f"Caso atualizado via webhook: {issue_key}")
+            return {"status": "updated", "case_id": issue_key}
+        else:
+            # Criar novo caso
+            new_case = Case(
+                jira_id=issue_key,
+                title=title,
+                description=description,
+                responsible=responsible,
+                status=status
+            )
+            
+            doc = new_case.model_dump()
+            doc['opened_date'] = doc['opened_date'].isoformat()
+            doc['created_at'] = doc['created_at'].isoformat()
+            if doc['closed_date']:
+                doc['closed_date'] = doc['closed_date'].isoformat()
+            
+            await db.cases.insert_one(doc)
+            logger.info(f"Novo caso criado via webhook: {issue_key}")
+            return {"status": "created", "case_id": issue_key}
+            
+    except Exception as e:
+        logger.error(f"Erro ao processar webhook do Jira: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
 # Activities
 @api_router.post("/activities", response_model=Activity)
 async def create_activity(activity: ActivityCreate):
