@@ -12,6 +12,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     total_cases: 0,
     completed_cases: 0,
