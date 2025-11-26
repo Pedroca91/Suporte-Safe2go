@@ -532,6 +532,34 @@ export const Cases = () => {
         </div>
       </div>
 
+      {/* Indicador de Filtro Ativo */}
+      {seguradoraFilter !== 'all' && (
+        <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-purple-700 font-medium">
+                📊 Filtrando por: {seguradoraFilter}
+              </span>
+              <span className="text-purple-600 text-sm">
+                ({filteredCases.length} {filteredCases.length === 1 ? 'caso' : 'casos'})
+              </span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSeguradoraFilter('all');
+                setSearchParams({});
+                toast.success('Filtro removido');
+              }}
+              className="text-purple-600 border-purple-300 hover:bg-purple-100"
+            >
+              Limpar Filtro
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Cases List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
