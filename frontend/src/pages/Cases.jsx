@@ -199,7 +199,7 @@ export const Cases = () => {
 
   useEffect(() => {
     filterCases();
-  }, [cases, searchTerm, statusFilter, responsibleFilter]);
+  }, [cases, searchTerm, statusFilter, responsibleFilter, seguradoraFilter]);
 
   const fetchCases = async () => {
     try {
@@ -235,6 +235,11 @@ export const Cases = () => {
     // Responsible filter
     if (responsibleFilter !== 'all') {
       filtered = filtered.filter((c) => c.responsible === responsibleFilter);
+    }
+
+    // Seguradora filter
+    if (seguradoraFilter !== 'all') {
+      filtered = filtered.filter((c) => c.seguradora === seguradoraFilter);
     }
 
     setFilteredCases(filtered);
