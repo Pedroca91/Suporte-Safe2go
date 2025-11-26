@@ -106,19 +106,19 @@ export const Dashboard = () => {
       
       // Distribuição por Categoria
       yPos += 10;
-      pdf.setFontSize(14);
+      pdf.setFontSize(13);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Distribuição por Categoria:', 20, yPos);
-      yPos += 10;
+      yPos += 8;
       
-      pdf.setFontSize(12);
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
       
       // Criar gráfico de barras manualmente
       const maxCount = Math.max(...categoryData.map(c => c.count));
-      const barMaxWidth = 130; // Largura máxima da barra
+      const barMaxWidth = 80; // Largura máxima da barra reduzida
       
-      categoryData.slice(0, 8).forEach((category, index) => {
+      categoryData.slice(0, 10).forEach((category, index) => {
         const barWidth = (category.count / maxCount) * barMaxWidth;
         const percentage = ((category.count / stats.total_cases) * 100).toFixed(1);
         
@@ -132,29 +132,41 @@ export const Dashboard = () => {
           [34, 197, 94],    // green
           [20, 184, 166],   // teal
           [14, 165, 233],   // sky
+          [168, 85, 247],   // purple
+          [236, 72, 153],   // pink
         ];
         const color = colors[index % colors.length];
         
-        // Desenhar barra
-        pdf.setFillColor(...color);
-        pdf.rect(20, yPos, barWidth, 6, 'F');
-        
-        // Nome da categoria e quantidade
+        // Nome da categoria (lado esquerdo, antes da barra)
         pdf.setTextColor(30, 41, 59);
-        const categoryName = category.category.length > 25 
-          ? category.category.substring(0, 25) + '...' 
-          : category.category;
-        pdf.text(categoryName, 155, yPos + 4);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(`${category.count} (${percentage}%)`, 20 + barWidth + 5, yPos + 4);
         pdf.setFont('helvetica', 'normal');
+        const categoryName = category.category.length > 20 
+          ? category.category.substring(0, 20) + '...' 
+          : category.category;
+        pdf.text(categoryName, 20, yPos + 3.5);
         
-        yPos += 10;
+        // Desenhar barra (no meio)
+        pdf.setFillColor(...color);
+        pdf.rect(85, yPos, barWidth, 5, 'F');
+        
+        // Quantidade e percentual (lado direito, após a barra)
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`${category.count}`, 170, yPos + 3.5);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`(${percentage}%)`, 178, yPos + 3.5);
+        
+        yPos += 8;
         
         // Adicionar nova página se necessário
         if (yPos > pageHeight - 30 && index < categoryData.length - 1) {
           pdf.addPage();
           yPos = 20;
+          pdf.setFontSize(13);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('Distribuição por Categoria (continuação):', 20, yPos);
+          yPos += 8;
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
         }
       });
       
