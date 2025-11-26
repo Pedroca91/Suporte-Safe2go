@@ -171,11 +171,20 @@ export const Cases = () => {
   useEffect(() => {
     fetchCases();
     
-    // Aplicar filtro da URL se existir
+    // Aplicar filtros da URL se existirem
     const statusFromUrl = searchParams.get('status');
+    const seguradoraFromUrl = searchParams.get('seguradora');
+    
     if (statusFromUrl) {
       setStatusFilter(statusFromUrl);
-      toast.info(`Filtrando por: ${statusFromUrl}`);
+      toast.info(`Filtrando por status: ${statusFromUrl}`);
+    }
+    
+    if (seguradoraFromUrl) {
+      setSeguradoraFilter(seguradoraFromUrl);
+      toast.success(`📊 Mostrando casos da ${seguradoraFromUrl}`, {
+        duration: 3000
+      });
     }
   }, []);
 
