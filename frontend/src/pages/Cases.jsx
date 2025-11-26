@@ -25,6 +25,7 @@ export const Cases = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [responsibleFilter, setResponsibleFilter] = useState('all');
+  const [seguradoraFilter, setSeguradoraFilter] = useState('all');
   const [newCaseIds, setNewCaseIds] = useState(new Set());
   const [soundEnabled, setSoundEnabled] = useState(false);
   const audioContextRef = useRef(null);
