@@ -351,7 +351,7 @@ export const Cases = () => {
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">
                       {caseItem.jira_id}
                     </span>
@@ -367,6 +367,11 @@ export const Cases = () => {
                     >
                       {caseItem.status}
                     </span>
+                    {caseItem.category && (
+                      <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-200">
+                        📂 {caseItem.category}
+                      </span>
+                    )}
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{caseItem.title}</h3>
                   <p className="text-sm text-gray-600 mb-2">{caseItem.description}</p>
