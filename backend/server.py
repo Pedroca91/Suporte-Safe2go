@@ -32,6 +32,36 @@ app = FastAPI()
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
 
+# WebSocket Connection Manager
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Set[WebSocket] = set()
+    
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.add(websocket)
+        logger.info(f"WebSocket conectado. Total de conexões: {len(self.active_connections)}")
+    
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.discard(websocket)
+        logger.info(f"WebSocket desconectado. Total de conexões: {len(self.active_connections)}")
+    
+    async def broadcast(self, message: dict):
+        """Envia mensagem para todos os clientes conectados"""
+        disconnected = set()
+        for connection in self.active_connections:
+            try:
+                await connection.send_json(message)
+            except Exception as e:
+                logger.error(f"Erro ao enviar mensagem WebSocket: {e}")
+                disconnected.add(connection)
+        
+        # Remover conexões com erro
+        for conn in disconnected:
+            self.active_connections.discard(conn)
+
+manager = ConnectionManager()
+
 # Models
 class User(BaseModel):
     model_config = ConfigDict(extra="ignore")
