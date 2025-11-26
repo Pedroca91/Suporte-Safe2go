@@ -668,6 +668,15 @@ async def jira_webhook(payload: dict):
             }
             await db.cases.update_one({'jira_id': issue_key}, {'$set': update_data})
             logger.info(f"Caso atualizado via webhook: {issue_key}")
+            
+            # Notificar clientes WebSocket sobre atualização
+            await manager.broadcast({
+                "type": "case_updated",
+                "case_id": issue_key,
+                "title": title,
+                "status": status
+            })
+            
             return {"status": "updated", "case_id": issue_key}
         else:
             # Criar novo caso
@@ -690,6 +699,24 @@ async def jira_webhook(payload: dict):
             
             await db.cases.insert_one(doc)
             logger.info(f"Novo caso criado via webhook: {issue_key}")
+            
+            # Notificar clientes WebSocket sobre novo caso
+            await manager.broadcast({
+                "type": "new_case",
+                "case": {
+                    "id": new_case.id,
+                    "jira_id": issue_key,
+                    "title": title,
+                    "description": description,
+                    "responsible": responsible,
+                    "status": status,
+                    "category": category,
+                    "seguradora": seguradora,
+                    "opened_date": doc['opened_date'],
+                    "created_at": doc['created_at']
+                }
+            })
+            
             return {"status": "created", "case_id": issue_key}
             
     except Exception as e:
