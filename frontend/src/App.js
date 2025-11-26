@@ -48,6 +48,16 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/analytics"
+              element={
+                <PrivateRoute>
+                  <Layout>
+                    <RecurrentAnalysis />
+                  </Layout>
+                </PrivateRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Toaster position="top-right" richColors />
