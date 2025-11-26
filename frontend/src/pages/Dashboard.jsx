@@ -237,6 +237,46 @@ export const Dashboard = () => {
         </div>
       </div>
 
+      {/* Alerta de Análise Recorrente */}
+      <div 
+        className="bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-6 mb-8 cursor-pointer hover:shadow-2xl transition-all transform hover:scale-[1.02]"
+        onClick={() => navigate('/analytics')}
+      >
+        <div className="flex items-center justify-between text-white">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <h3 className="text-2xl font-bold">Análise de Casos Recorrentes</h3>
+            </div>
+            <p className="text-white text-opacity-90 mb-3">
+              Identifique padrões e erros que se repetem para criar automações e melhorar a eficiência da equipe
+            </p>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                📊 Análise por Categoria
+              </span>
+              <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                🔍 Casos Similares
+              </span>
+              <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                ⚡ Sugestões de Automação
+              </span>
+            </div>
+          </div>
+          <div className="hidden lg:flex items-center">
+            <div className="text-right mr-4">
+              <p className="text-4xl font-bold">{stats.total_cases}</p>
+              <p className="text-sm opacity-90">casos analisados</p>
+            </div>
+            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              <span className="text-2xl">→</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Casos por Seguradora */}
       {Object.keys(stats.cases_by_seguradora).length > 0 && (
         <div className="card mb-6" data-testid="seguradoras-stats">
