@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Cases from './pages/Cases';
 import SupportPanel from './pages/SupportPanel';
+import RecurrentAnalysis from './pages/RecurrentAnalysis';
 import Login from './pages/Login';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
