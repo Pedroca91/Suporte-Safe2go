@@ -560,6 +560,50 @@ async def jira_webhook(payload: dict):
         }
         status = status_map.get(status_jira, 'Pendente')
         
+        # Detectar seguradora do responsável ou descrição
+        combined_text = f"{responsible} {title} {description}".upper()
+        seguradora = None
+        if 'AVLA' in combined_text:
+            seguradora = 'AVLA'
+        elif 'ESSOR' in combined_text:
+            seguradora = 'ESSOR'
+        elif 'DAYCOVAL' in combined_text:
+            seguradora = 'DAYCOVAL'
+        
+        # Categorizar automaticamente
+        combined_lower = f"{title} {description}".lower()
+        category = None
+        keywords = []
+        
+        if 'reprocessamento' in combined_lower or 'reprocessar' in combined_lower:
+            category = 'Reprocessamento'
+            keywords = ['reprocessamento', 'reprocessar']
+        elif 'erro corretor' in combined_lower or 'corretor' in combined_lower:
+            category = 'Erro Corretor'
+            keywords = ['erro', 'corretor']
+        elif 'nova lei' in combined_lower or 'adequação' in combined_lower or 'adequacao' in combined_lower:
+            category = 'Adequação Nova Lei'
+            keywords = ['nova lei', 'adequação']
+        elif 'boleto' in combined_lower:
+            category = 'Erro Boleto'
+            keywords = ['boleto', 'pagamento']
+        elif 'endosso' in combined_lower:
+            category = 'Problema Endosso'
+            keywords = ['endosso']
+        elif 'sumiço' in combined_lower or 'sumico' in combined_lower:
+            category = 'Sumiço de Dados'
+            keywords = ['sumiço']
+        elif 'integra' in combined_lower:
+            category = 'Integração'
+            keywords = ['integração', 'teste']
+        else:
+            category = 'Outros'
+            keywords = []
+        
+        # Adicionar seguradora como keyword
+        if seguradora:
+            keywords.append(seguradora.lower())
+        
         # Verificar se o caso já existe
         existing_case = await db.cases.find_one({'jira_id': issue_key})
         
@@ -569,7 +613,10 @@ async def jira_webhook(payload: dict):
                 'title': title,
                 'description': description,
                 'responsible': responsible,
-                'status': status
+                'status': status,
+                'category': category,
+                'keywords': keywords,
+                'seguradora': seguradora
             }
             await db.cases.update_one({'jira_id': issue_key}, {'$set': update_data})
             logger.info(f"Caso atualizado via webhook: {issue_key}")
@@ -581,7 +628,10 @@ async def jira_webhook(payload: dict):
                 title=title,
                 description=description,
                 responsible=responsible,
-                status=status
+                status=status,
+                category=category,
+                keywords=keywords,
+                seguradora=seguradora
             )
             
             doc = new_case.model_dump()
