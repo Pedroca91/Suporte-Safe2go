@@ -212,6 +212,22 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 async def root():
     return {"message": "Suporte Safe2Go - Sistema de Gerenciamento"}
 
+# WebSocket Route
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            # Manter conexão aberta e receber mensagens (se necessário)
+            data = await websocket.receive_text()
+            # Pode processar mensagens do cliente aqui se necessário
+            logger.info(f"Mensagem recebida do WebSocket: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except Exception as e:
+        logger.error(f"Erro no WebSocket: {e}")
+        manager.disconnect(websocket)
+
 # Auth Routes
 @api_router.post("/auth/register", response_model=AuthResponse)
 async def register(user_data: UserRegister):
