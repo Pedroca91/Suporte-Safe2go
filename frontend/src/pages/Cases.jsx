@@ -462,7 +462,7 @@ export const Cases = () => {
 
       {/* Filters */}
       <div className="card mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <Label htmlFor="search" className="flex items-center gap-2 mb-2">
               <Search className="w-4 h-4" />
