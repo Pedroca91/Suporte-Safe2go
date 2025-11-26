@@ -285,7 +285,7 @@ async def get_recurrent_cases():
     total_cases = len(all_cases)
     
     for case in all_cases:
-        category = case.get('category', 'Não categorizado')
+        category = case.get('category') or 'Não categorizado'
         if category not in category_groups:
             category_groups[category] = []
         category_groups[category].append(case)
