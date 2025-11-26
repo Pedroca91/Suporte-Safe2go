@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Headphones, Menu, X, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, FileText, Headphones, TrendingUp, Menu, X, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
 
@@ -13,6 +13,7 @@ export const Layout = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Casos', path: '/cases', icon: FileText },
+    { name: 'Análise Recorrente', path: '/analytics', icon: TrendingUp },
     { name: 'Painel Suporte', path: '/support', icon: Headphones },
   ];
 
