@@ -539,7 +539,7 @@ class Safe2GoHelpdeskTester:
         return self.tests_passed == self.tests_run
 
 def main():
-    tester = SupportSystemTester()
+    tester = Safe2GoHelpdeskTester()
     success = tester.run_all_tests()
     return 0 if success else 1
 
