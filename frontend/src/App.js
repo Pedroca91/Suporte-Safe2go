@@ -9,6 +9,7 @@ import RecurrentAnalysis from './pages/RecurrentAnalysis';
 import UserManagement from './pages/UserManagement';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
