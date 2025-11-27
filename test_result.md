@@ -208,3 +208,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
     - message: "Starting comprehensive helpdesk system testing with provided credentials. Will test complete user flows for both client and admin roles."
+    - agent: "testing"
+    - message: "CRITICAL ISSUES FOUND: 1) SelectItem component error causing red screen and form failures 2) 403 errors when loading cases for both client and admin 3) Notification bell not found 4) Cases cannot be loaded due to backend permission issues. Login works but core functionality is broken."
