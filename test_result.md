@@ -167,15 +167,18 @@ frontend:
 
   - task: "Ticket Creation Flow"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/pages/NewTicket.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
         - agent: "testing"
         - comment: "Need to test complete ticket creation flow with form validation and redirection"
+        - working: false
+        - agent: "testing"
+        - comment: "❌ CRITICAL: Ticket creation form broken due to SelectItem component error. Red screen error: 'A <Select.Item /> must have a value prop that is not an empty string'. Form fields (#title, #description) not accessible. Navigation to /new-ticket works but form is unusable."
 
   - task: "Case Details and Comments System"
     implemented: true
