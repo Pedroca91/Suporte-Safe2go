@@ -49,7 +49,9 @@ function App() {
               element={
                 <PrivateRoute>
                   <Layout>
-                    <CaseDetails />
+                    <ErrorBoundary>
+                      <CaseDetails />
+                    </ErrorBoundary>
                   </Layout>
                 </PrivateRoute>
               }
