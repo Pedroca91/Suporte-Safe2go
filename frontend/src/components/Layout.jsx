@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Headphones, TrendingUp, Users, Menu, X, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, FileText, Headphones, TrendingUp, Users, Menu, X, LogOut, User, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
+import NotificationBell from './NotificationBell';
 
 export const Layout = ({ children }) => {
   const location = useLocation();
