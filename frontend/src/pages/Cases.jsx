@@ -201,7 +201,7 @@ export const Cases = () => {
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCase ? 'Editar Caso' : 'Novo Caso'}</DialogTitle>
+              <DialogTitle>{editingCase ? 'Editar Chamado' : 'Novo Chamado'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div>
