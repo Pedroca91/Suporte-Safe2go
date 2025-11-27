@@ -183,8 +183,8 @@ export const Cases = () => {
     <div className="page-container">
       <div className="page-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex-1">
-          <h1 className="page-title" data-testid="cases-title">Casos</h1>
-          <p className="page-subtitle">Gerencie todos os casos de suporte</p>
+          <h1 className="page-title" data-testid="cases-title">Chamados</h1>
+          <p className="page-subtitle">Gerencie todos os chamados de suporte</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={(open) => {
           setDialogOpen(open);
