@@ -104,6 +104,10 @@ export const CaseDetails = () => {
       return;
     }
 
+    if (submitting) {
+      return; // Prevenir múltiplos submits
+    }
+
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
@@ -119,7 +123,11 @@ export const CaseDetails = () => {
       toast.success('Comentário adicionado!');
       setCommentText('');
       setIsInternal(false);
-      fetchComments();
+      
+      // Aguardar um pouco antes de recarregar
+      setTimeout(() => {
+        fetchComments();
+      }, 300);
     } catch (error) {
       console.error('Erro ao adicionar comentário:', error);
       toast.error('Erro ao adicionar comentário');
