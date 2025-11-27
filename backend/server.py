@@ -907,9 +907,14 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     )
 
 @api_router.get("/dashboard/charts", response_model=List[ChartData])
-async def get_chart_data():
+async def get_chart_data(current_user: dict = Depends(get_current_user)):
     # Get last 7 days data
     chart_data = []
+    
+    # Construir query base - se cliente, filtrar apenas seus casos
+    base_query = {}
+    if current_user['role'] == 'cliente':
+        base_query['creator_id'] = current_user['id']
     
     for i in range(6, -1, -1):
         date = datetime.now(timezone.utc) - timedelta(days=i)
@@ -918,6 +923,7 @@ async def get_chart_data():
         
         # Count completed and pending cases for this day
         completed = await db.cases.count_documents({
+            **base_query,
             "opened_date": {
                 "$gte": start_date.isoformat(),
                 "$lt": end_date.isoformat()
@@ -926,6 +932,7 @@ async def get_chart_data():
         })
         
         pending = await db.cases.count_documents({
+            **base_query,
             "opened_date": {
                 "$gte": start_date.isoformat(),
                 "$lt": end_date.isoformat()
