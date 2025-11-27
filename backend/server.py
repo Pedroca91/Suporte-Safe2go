@@ -300,6 +300,19 @@ async def login(credentials: UserLogin):
     if not verify_password(credentials.password, user_doc['password']):
         raise HTTPException(status_code=401, detail="Email ou senha incorretos")
     
+    # Verificar se usuário está aprovado
+    if user_doc.get('status') == 'pendente':
+        raise HTTPException(
+            status_code=403, 
+            detail="Seu cadastro ainda não foi aprovado. Aguarde a aprovação do administrador."
+        )
+    
+    if user_doc.get('status') == 'rejeitado':
+        raise HTTPException(
+            status_code=403, 
+            detail="Seu cadastro foi rejeitado. Entre em contato com o administrador."
+        )
+    
     # Convert to User model (exclude password)
     user_doc.pop('password', None)
     user_doc.pop('_id', None)
