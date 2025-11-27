@@ -196,7 +196,7 @@ export const Cases = () => {
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Novo Caso
+              Novo Chamado
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
