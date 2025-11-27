@@ -208,7 +208,10 @@ export const Cases = () => {
   const fetchCases = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/cases`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/cases`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setCases(response.data);
     } catch (error) {
       console.error('Erro ao carregar casos:', error);
