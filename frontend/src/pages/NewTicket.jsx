@@ -41,6 +41,13 @@ export const NewTicket = () => {
       // Gerar um ID temporário para o Jira
       const tempJiraId = `WEB-${Date.now().toString().slice(-6)}`;
       
+      // Se for cliente, usar a empresa do usuário como seguradora
+      // Se for admin, usar o valor selecionado no formulário
+      const isAdmin = user?.role === 'administrador';
+      const seguradora = isAdmin 
+        ? (formData.seguradora === 'none' ? null : formData.seguradora)
+        : user?.company || null;
+      
       await axios.post(
         `${API}/cases`,
         {
@@ -48,7 +55,7 @@ export const NewTicket = () => {
           title: formData.title,
           description: formData.description,
           priority: formData.priority,
-          seguradora: formData.seguradora === 'none' ? null : formData.seguradora,
+          seguradora: seguradora,
           category: formData.category === 'none' ? null : formData.category,
           status: 'Pendente',
           responsible: 'Não atribuído'
