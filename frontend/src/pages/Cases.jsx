@@ -427,7 +427,7 @@ export const Cases = () => {
         </div>
       ) : filteredCases.length === 0 ? (
         <div className="card text-center py-12" data-testid="no-cases-message">
-          <p className="text-gray-500">Nenhum caso encontrado</p>
+          <p className="text-gray-500">Nenhum chamado encontrado</p>
         </div>
       ) : (
         <div className="grid gap-4" data-testid="cases-list">
