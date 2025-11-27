@@ -102,7 +102,83 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Testar o sistema de helpdesk completo no frontend com credenciais específicas e fluxos de cliente/admin"
+user_problem_statement: "Testar o sistema de helpdesk completo no backend e frontend com credenciais específicas e fluxos de cliente/admin"
+
+backend:
+  - task: "Authentication System - Admin and Client Login"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test POST /api/auth/login for both admin (pedro.carvalho@safe2go.com.br) and client (cliente@teste.com) with senha123"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED: Authentication system working perfectly. Admin login (pedro.carvalho@safe2go.com.br/senha123) returns valid JWT token and user data with role 'administrador'. Client login (cliente@teste.com/senha123) returns valid JWT token and user data with role 'cliente'. GET /api/auth/me endpoint validates tokens correctly for both roles."
+
+  - task: "Cases Management - Role-based Access Control"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test GET /api/cases with role filtering - client should see only own cases, admin should see all cases"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED: Role-based access control working correctly. Admin sees all 2 cases in system. Client sees only own 2 cases (filtered by creator_id). GET /api/cases/:id returns detailed case information. POST /api/cases creates new case with creator_id automatically set from JWT token."
+
+  - task: "Comments System - Public and Internal Comments"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test POST /api/cases/:id/comments for public and internal comments, and GET with role-based filtering"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED: Comments system working perfectly. POST /api/cases/:id/comments creates public comments (is_internal=false) and internal comments (is_internal=true). GET /api/cases/:id/comments correctly filters: Admin sees all comments (2 total including internal), Client sees only public comments (1 total, internal comments filtered out)."
+
+  - task: "Notifications System - CRUD Operations"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test GET /api/notifications, POST /api/notifications/:id/read, and POST /api/notifications/mark-all-read"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED: Notifications system fully functional. GET /api/notifications returns user-specific notifications (Admin: 1, Client: 2). POST /api/notifications/:id/read successfully marks individual notifications as read. POST /api/notifications/mark-all-read marks all user notifications as read."
+
+  - task: "User Management - Admin-only Access"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+        - agent: "testing"
+        - comment: "Need to test GET /api/users and GET /api/users/pending with admin-only access control (403 for clients)"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED: User management access control working correctly. Admin can access GET /api/users (returns 2 users) and GET /api/users/pending (returns 0 pending users). Client receives proper 403 Forbidden responses for both endpoints, confirming admin-only access is enforced."
 
 frontend:
   - task: "Login System - Client and Admin Authentication"
