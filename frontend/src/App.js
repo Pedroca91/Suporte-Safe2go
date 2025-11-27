@@ -54,6 +54,16 @@ function App() {
               }
             />
             <Route
+              path="/new-ticket"
+              element={
+                <PrivateRoute>
+                  <Layout>
+                    <NewTicket />
+                  </Layout>
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/support"
               element={
                 <PrivateRoute>
