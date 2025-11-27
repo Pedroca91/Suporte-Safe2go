@@ -303,10 +303,10 @@ export const CaseDetails = () => {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                          {comment.user_name.charAt(0).toUpperCase()}
+                          {comment.user_name ? comment.user_name.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div>
-                          <p className="font-semibold text-sm">{comment.user_name}</p>
+                          <p className="font-semibold text-sm">{comment.user_name || 'Usuário'}</p>
                           <p className="text-xs text-gray-500">
                             {formatDate(comment.created_at)}
                           </p>
