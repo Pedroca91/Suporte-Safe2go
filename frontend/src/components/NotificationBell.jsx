@@ -206,7 +206,7 @@ export const NotificationBell = () => {
               }}
               className="text-xs text-purple-600 hover:text-purple-700"
             >
-              Ver todos os casos
+              Ver todos os chamados
             </Button>
           </div>
         )}
