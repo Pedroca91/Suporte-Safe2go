@@ -464,6 +464,22 @@ export const Cases = () => {
         </Dialog>
       </div>
 
+      {/* Banner informativo para clientes */}
+      {!isAdmin && (
+        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-1">Meus Chamados</h3>
+              <p className="text-sm text-blue-800">
+                Aqui você pode ver todos os seus chamados e acompanhar o andamento. 
+                Para abrir um novo chamado, clique no botão "Abrir Chamado" no topo da página.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="card mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
