@@ -113,6 +113,31 @@ class UserUpdate(BaseModel):
     company: Optional[str] = None
     role: Optional[str] = None
     status: Optional[str] = None
+class Comment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    case_id: str
+    user_id: str
+    user_name: str
+    content: str
+    is_internal: bool = False  # True = observação interna (só ADM), False = resposta ao cliente
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CommentCreate(BaseModel):
+    content: str
+    is_internal: bool = False
+
+class Notification(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    case_id: str
+    case_title: str
+    message: str
+    type: str  # "new_comment", "status_change", "case_assigned"
+    read: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 class Case(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -120,13 +145,17 @@ class Case(BaseModel):
     title: str
     description: str
     responsible: str
-    status: str  # Concluído, Pendente
+    creator_id: Optional[str] = None  # ID do usuário que criou o chamado
+    creator_name: Optional[str] = None  # Nome do usuário que criou
+    status: str  # Concluído, Pendente, "Aguardando resposta do cliente"
+    priority: Optional[str] = "Média"  # Baixa, Média, Alta, Urgente
     seguradora: Optional[str] = None  # AVLA, DAYCOVAL, ESSOR
-    category: Optional[str] = None  # Categoria do erro (ex: Reprocessamento, Erro Corretor, Nova Lei)
-    keywords: List[str] = []  # Palavras-chave para busca de similaridade
+    category: Optional[str] = None  # Categoria do erro
+    keywords: List[str] = []  # Palavras-chave
     opened_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     closed_date: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class CaseCreate(BaseModel):
     jira_id: str
