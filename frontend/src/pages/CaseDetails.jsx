@@ -27,7 +27,7 @@ import { toast } from 'sonner';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-export const CaseDetails = () => {
+const CaseDetailsComponent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
