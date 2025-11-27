@@ -7,14 +7,24 @@ import websocket
 import threading
 import time
 
-class HelpdeskSystemTester:
+class Safe2GoHelpdeskTester:
     def __init__(self, base_url="https://validacao-ponto.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
-        self.ws_url = f"wss://projeto-atual-1.preview.emergentagent.com/ws"
+        self.ws_url = f"wss://validacao-ponto.preview.emergentagent.com/ws"
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        
+        # Test credentials
+        self.admin_credentials = {
+            "email": "pedro.carvalho@safe2go.com.br",
+            "password": "senha123"  # Will try admin123 if this fails
+        }
+        self.client_credentials = {
+            "email": "cliente@teste.com", 
+            "password": "senha123"  # Will try cliente123 if this fails
+        }
         
         # Test data storage
         self.admin_token = None
