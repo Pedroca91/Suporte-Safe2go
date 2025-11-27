@@ -223,7 +223,7 @@ export const Cases = () => {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
-                  placeholder="Título do caso"
+                  placeholder="Título do chamado"
                 />
               </div>
               <div>
