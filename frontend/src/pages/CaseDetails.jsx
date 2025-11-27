@@ -321,7 +321,7 @@ const CaseDetails = () => {
                           <SelectValue placeholder="Selecione a seguradora" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Nenhuma</SelectItem>
+                          <SelectItem value="Nenhuma">Nenhuma</SelectItem>
                           <SelectItem value="AVLA">AVLA</SelectItem>
                           <SelectItem value="DAYCOVAL">DAYCOVAL</SelectItem>
                           <SelectItem value="ESSOR">ESSOR</SelectItem>
