@@ -284,14 +284,14 @@ export const CaseDetails = () => {
           <CardContent>
             {/* Lista de Comentários */}
             <div className="space-y-4 mb-6">
-              {comments.length === 0 ? (
+              {!comments || comments.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
                   <p>Nenhum comentário ainda</p>
                   <p className="text-sm">Seja o primeiro a comentar!</p>
                 </div>
               ) : (
-                comments.map((comment) => (
+                comments.filter(c => c && c.id).map((comment) => (
                   <div 
                     key={comment.id} 
                     className={`p-4 rounded-lg border ${
