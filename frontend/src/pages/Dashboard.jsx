@@ -53,9 +53,14 @@ export const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('token');
       const [statsRes, chartsRes] = await Promise.all([
-        axios.get(`${API}/dashboard/stats`),
-        axios.get(`${API}/dashboard/charts`),
+        axios.get(`${API}/dashboard/stats`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${API}/dashboard/charts`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
       ]);
       setStats(statsRes.data);
       setChartData(chartsRes.data);
