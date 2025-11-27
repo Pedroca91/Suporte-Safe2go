@@ -137,15 +137,18 @@ frontend:
 
   - task: "Header Navigation - Abrir Chamado Button"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/Layout.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
         - agent: "testing"
         - comment: "Need to verify 'Abrir Chamado' button appears in header for authenticated users"
+        - working: true
+        - agent: "testing"
+        - comment: "✅ TESTED: 'Abrir Chamado' button appears in header for authenticated users and navigation to /new-ticket works correctly."
 
   - task: "Notification System - Bell Icon"
     implemented: true
