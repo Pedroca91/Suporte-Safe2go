@@ -136,17 +136,20 @@ export const Cases = () => {
     }
   };
 
-  const handleEdit = (caseItem) => {
-    setEditingCase(caseItem);
-    setFormData({
-      jira_id: caseItem.jira_id,
-      title: caseItem.title,
-      description: caseItem.description,
-      responsible: caseItem.responsible,
-      status: caseItem.status,
-      seguradora: caseItem.seguradora || '',
-    });
-    setDialogOpen(true);
+  const handleStatusChange = async (caseId, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        `${API}/cases/${caseId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Status atualizado com sucesso!');
+      fetchCases();
+    } catch (error) {
+      console.error('Erro ao atualizar status:', error);
+      toast.error('Erro ao atualizar status');
+    }
   };
 
   const handleDelete = async (id) => {
