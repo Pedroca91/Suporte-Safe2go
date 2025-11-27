@@ -229,16 +229,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Login System - Client and Admin Authentication"
-    - "Client Dashboard - Meus Chamados Banner"
-    - "Ticket Creation Flow"
-    - "Case Details and Comments System"
-    - "Role-based Access Control"
-  stuck_tasks: 
     - "Notification System - Bell Icon"
     - "Ticket Creation Flow"
-    - "Case Details and Comments System"
-    - "Role-based Access Control"
+  stuck_tasks: []
   test_all: true
   test_priority: "high_first"
 
