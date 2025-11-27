@@ -75,6 +75,42 @@ const CaseDetails = () => {
     loadData();
   }, [loadData]);
 
+  const openEditDialog = () => {
+    if (state.caseData) {
+      setEditFormData({
+        jira_id: state.caseData.jira_id || '',
+        title: state.caseData.title || '',
+        description: state.caseData.description || '',
+        responsible: state.caseData.responsible || '',
+        status: state.caseData.status || 'Pendente',
+        priority: state.caseData.priority || 'Média',
+        seguradora: state.caseData.seguradora || '',
+        category: state.caseData.category || ''
+      });
+      setEditDialogOpen(true);
+    }
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        `${API}/cases/${id}`,
+        editFormData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      toast.success('Caso atualizado com sucesso!');
+      setEditDialogOpen(false);
+      loadData();
+    } catch (error) {
+      console.error('Erro:', error);
+      toast.error('Erro ao atualizar caso');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
