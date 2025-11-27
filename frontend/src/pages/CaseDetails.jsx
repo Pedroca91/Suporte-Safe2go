@@ -184,7 +184,7 @@ const CaseDetails = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <p className="text-gray-600 mb-4">Caso não encontrado</p>
+          <p className="text-gray-600 mb-4">Chamado não encontrado</p>
           <Button onClick={() => navigate('/cases')}>Voltar</Button>
         </div>
       </div>
