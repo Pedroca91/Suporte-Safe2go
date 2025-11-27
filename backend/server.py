@@ -875,17 +875,22 @@ async def delete_case(case_id: str):
 
 # Dashboard
 @api_router.get("/dashboard/stats", response_model=DashboardStats)
-async def get_dashboard_stats():
-    total = await db.cases.count_documents({})
-    completed = await db.cases.count_documents({"status": "Concluído"})
-    pending = await db.cases.count_documents({"status": "Pendente"})
-    waiting_client = await db.cases.count_documents({"status": "Aguardando resposta do cliente"})
+async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
+    # Construir query base - se cliente, filtrar apenas seus casos
+    base_query = {}
+    if current_user['role'] == 'cliente':
+        base_query['creator_id'] = current_user['id']
+    
+    total = await db.cases.count_documents(base_query)
+    completed = await db.cases.count_documents({**base_query, "status": "Concluído"})
+    pending = await db.cases.count_documents({**base_query, "status": "Pendente"})
+    waiting_client = await db.cases.count_documents({**base_query, "status": "Aguardando resposta do cliente"})
     
     percentage = (completed / total * 100) if total > 0 else 0
     
     # Contar casos por seguradora
     cases_by_seguradora = {}
-    all_cases = await db.cases.find({}, {"_id": 0, "seguradora": 1}).to_list(1000)
+    all_cases = await db.cases.find(base_query, {"_id": 0, "seguradora": 1}).to_list(1000)
     for case in all_cases:
         seguradora = case.get('seguradora', 'Não especificada')
         if not seguradora:
