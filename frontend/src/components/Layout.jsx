@@ -101,7 +101,7 @@ export const Layout = ({ children }) => {
               </button>
             </div>
             <nav className="flex-1 p-4 space-y-2">
-              {navigation.map((item) => {
+              {filteredNavigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
                 return (
@@ -117,6 +117,11 @@ export const Layout = ({ children }) => {
                   >
                     <Icon className="w-5 h-5" />
                     <span className="font-medium">{item.name}</span>
+                    {item.adminOnly && (
+                      <span className="ml-auto text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+                        ADM
+                      </span>
+                    )}
                   </Link>
                 );
               })}
