@@ -32,6 +32,18 @@ const CaseDetails = () => {
     submitting: false
   });
 
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    jira_id: '',
+    title: '',
+    description: '',
+    responsible: '',
+    status: 'Pendente',
+    priority: 'Média',
+    seguradora: '',
+    category: ''
+  });
+
   const isAdmin = user?.role === 'administrador';
 
   const loadData = useCallback(async () => {
