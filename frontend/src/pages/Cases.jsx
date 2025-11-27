@@ -345,9 +345,10 @@ export const Cases = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="Pendente">Pendente</SelectItem>
-                <SelectItem value="Concluído">Concluído</SelectItem>
-                <SelectItem value="Aguardando resposta do cliente">Aguardando resposta do cliente</SelectItem>
+                <SelectItem value="Pendente">🟡 Pendente</SelectItem>
+                <SelectItem value="Em Desenvolvimento">🔵 Em Desenvolvimento</SelectItem>
+                <SelectItem value="Aguardando resposta do cliente">🟠 Aguardando resposta do cliente</SelectItem>
+                <SelectItem value="Concluído">🟢 Concluído</SelectItem>
               </SelectContent>
             </Select>
           </div>
