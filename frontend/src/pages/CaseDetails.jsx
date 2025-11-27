@@ -163,6 +163,20 @@ export const CaseDetails = () => {
     );
   }
 
+  // Garantir que temos dados antes de renderizar
+  if (!caseData.id || !caseData.title) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-600">Dados inválidos</p>
+          <Button onClick={() => navigate('/cases')} className="mt-4">
+            Voltar para Casos
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto">
