@@ -390,7 +390,7 @@ export const Dashboard = () => {
       <div id="dashboard-charts" className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Bar Chart */}
         <div className="card" data-testid="bar-chart-container">
-          <h3 className="text-lg font-semibold mb-4">Casos por Dia (Últimos 7 Dias)</h3>
+          <h3 className="text-lg font-semibold mb-4">Chamados por Dia (Últimos 7 Dias)</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
