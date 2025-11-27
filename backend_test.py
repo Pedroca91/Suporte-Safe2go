@@ -3,16 +3,29 @@ import sys
 import json
 from datetime import datetime, timedelta
 import uuid
+import websocket
+import threading
+import time
 
-class SupportSystemTester:
+class HelpdeskSystemTester:
     def __init__(self, base_url="https://projeto-atual-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
+        self.ws_url = f"wss://projeto-atual-1.preview.emergentagent.com/ws"
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        
+        # Test data storage
+        self.admin_token = None
+        self.client_token = None
+        self.admin_user = None
+        self.client_user = None
         self.created_case_id = None
-        self.created_activity_id = None
+        self.created_comment_id = None
+        self.created_notification_id = None
+        self.ws_connection = None
+        self.ws_messages = []
 
     def log_test(self, name, success, details=""):
         """Log test result"""
