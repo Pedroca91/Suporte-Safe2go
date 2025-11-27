@@ -629,8 +629,17 @@ async def mark_all_notifications_read(current_user: dict = Depends(get_current_u
 
 # Cases CRUD
 @api_router.post("/cases", response_model=Case)
-async def create_case(case: CaseCreate):
+async def create_case(case: CaseCreate, current_user: dict = Depends(get_current_user)):
+    # Gerar jira_id se não fornecido
+    if not case.jira_id:
+        # Gerar ID único no formato S2GSS-XXXXX
+        count = await db.cases.count_documents({})
+        case.jira_id = f"S2GSS-{count + 1:05d}"
+    
     case_dict = case.model_dump()
+    case_dict['creator_id'] = current_user['id']
+    case_dict['creator_name'] = current_user['name']
+    
     if case_dict.get('opened_date') is None:
         case_dict['opened_date'] = datetime.now(timezone.utc)
     
