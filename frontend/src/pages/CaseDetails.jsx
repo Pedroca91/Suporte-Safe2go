@@ -224,12 +224,12 @@ const CaseDetails = () => {
                     className="flex items-center gap-2"
                   >
                     <Edit className="h-4 w-4" />
-                    Editar Caso
+                    Editar Chamado
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Editar Caso</DialogTitle>
+                    <DialogTitle>Editar Chamado</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
                     <div>
