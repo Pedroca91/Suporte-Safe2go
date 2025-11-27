@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, Headphones, TrendingUp, Menu, X, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, FileText, Headphones, TrendingUp, Users, Menu, X, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/button';
 
@@ -11,11 +11,17 @@ export const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Casos', path: '/cases', icon: FileText },
-    { name: 'Análise Recorrente', path: '/analytics', icon: TrendingUp },
-    { name: 'Painel Suporte', path: '/support', icon: Headphones },
+    { name: 'Dashboard', path: '/', icon: LayoutDashboard, adminOnly: false },
+    { name: 'Casos', path: '/cases', icon: FileText, adminOnly: false },
+    { name: 'Análise Recorrente', path: '/analytics', icon: TrendingUp, adminOnly: false },
+    { name: 'Painel Suporte', path: '/support', icon: Headphones, adminOnly: false },
+    { name: 'Usuários', path: '/users', icon: Users, adminOnly: true },
   ];
+
+  // Filtrar navegação baseado no role do usuário
+  const filteredNavigation = navigation.filter(item => 
+    !item.adminOnly || user?.role === 'administrador'
+  );
 
   const handleLogout = () => {
     logout();
