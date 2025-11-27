@@ -12,7 +12,7 @@ Para tocar som, é necessário que **o usuário interaja** com a página primeir
 
 ### **1️⃣ Abra a Página de Casos**
 ```
-https://repo-visualizer-4.preview.emergentagent.com/cases
+https://projeto-atual-1.preview.emergentagent.com/cases
 ```
 
 ### **2️⃣ Verifique a Conexão WebSocket**
