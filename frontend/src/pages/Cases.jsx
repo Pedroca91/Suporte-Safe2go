@@ -669,13 +669,45 @@ export const Cases = () => {
         </div>
       ) : (
         <div className="grid gap-4" data-testid="cases-list">
+          {/* Botão Selecionar Todos - Apenas no modo seleção */}
+          {selectMode && isAdmin && (
+            <div className="card bg-purple-50 border-purple-200">
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  checked={selectedCases.length === filteredCases.length && filteredCases.length > 0}
+                  onCheckedChange={selectAllCases}
+                  id="select-all"
+                />
+                <Label htmlFor="select-all" className="cursor-pointer font-semibold text-purple-900">
+                  {selectedCases.length === filteredCases.length && filteredCases.length > 0
+                    ? `Desselecionar Todos (${filteredCases.length})`
+                    : `Selecionar Todos (${filteredCases.length})`
+                  }
+                </Label>
+              </div>
+            </div>
+          )}
+
           {filteredCases.map((caseItem) => (
             <div
               key={caseItem.id}
               data-testid={`case-item-${caseItem.id}`}
-              className="card hover:shadow-lg transition-shadow"
+              className={`card hover:shadow-lg transition-shadow ${
+                selectedCases.includes(caseItem.id) ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+              }`}
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* Checkbox de seleção */}
+                {selectMode && isAdmin && (
+                  <div className="flex items-center">
+                    <Checkbox
+                      checked={selectedCases.includes(caseItem.id)}
+                      onCheckedChange={() => toggleCaseSelection(caseItem.id)}
+                      id={`select-${caseItem.id}`}
+                    />
+                  </div>
+                )}
+                
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">
