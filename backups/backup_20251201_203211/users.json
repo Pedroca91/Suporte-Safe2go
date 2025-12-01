@@ -1,0 +1,58 @@
+[
+  {
+    "_id": "69289ccef2cfcd2d3d607b7c",
+    "id": "a46f7253-c1cf-427b-a841-a3abda927ea4",
+    "name": "Cliente Teste",
+    "email": "cliente@teste.com",
+    "password": "$2b$12$yc.xMZzzJ2eM9HeZEseg0.jsXGeBzhosuh.HjmW76hDKAtF1a52.i",
+    "role": "cliente",
+    "status": "aprovado",
+    "phone": "+55 11 88888-8888",
+    "company": "Empresa Teste",
+    "created_at": "2025-11-27T18:47:42.891362+00:00",
+    "approved_at": "2025-11-27T18:47:42.891379+00:00",
+    "approved_by": "system"
+  },
+  {
+    "_id": "69289dd2053568459e367eb9",
+    "id": "6fa40c01-78e3-4daa-b72e-4327f898fc4b",
+    "name": "Pedro Carvalho",
+    "email": "pedro.carvalho@fase2go.com.br",
+    "password": "$2b$12$cDkcQS5e7AlSj8TJSeaYC./PZOv6WHdDq0UG2LKEQmsr3VPHC22pi",
+    "role": "administrador",
+    "status": "aprovado",
+    "phone": null,
+    "company": "Fase2Go",
+    "created_at": "2025-11-27T18:52:02.446228+00:00",
+    "approved_at": "2025-11-27T18:52:02.446243+00:00",
+    "approved_by": "system"
+  },
+  {
+    "_id": "6928a85e82f917f39bd10164",
+    "id": "39193607-10e0-4dc7-9845-97c42df88c21",
+    "name": "Usuario teste",
+    "email": "pedrocarvalhooo1997@gmail.com",
+    "role": "cliente",
+    "status": "aprovado",
+    "phone": "11954643887",
+    "company": "AVLA",
+    "created_at": "2025-11-27T19:37:02.165573+00:00",
+    "approved_at": "2025-11-27T19:37:11.187310+00:00",
+    "approved_by": "6fa40c01-78e3-4daa-b72e-4327f898fc4b",
+    "password": "$2b$12$deXTQh3ys0doCsEogOlmYe/t28rJnciUqFcayyP8aPDx5voSb70P2"
+  },
+  {
+    "_id": "6928a94ebf3517c052ef3012",
+    "id": "67ac696b-8395-43c9-86f2-508486441303",
+    "name": "Cliente AVLA",
+    "email": "cliente@avla.com.br",
+    "password": "$2b$12$rCiA8txeCzS8UU16uh2.MekljBGT0Rgy5IxwKMVNjo8eUP2KtBgxO",
+    "role": "cliente",
+    "status": "aprovado",
+    "phone": "+55 11 77777-7777",
+    "company": "AVLA",
+    "created_at": "2025-11-27T19:41:02.842777+00:00",
+    "approved_at": "2025-11-27T19:41:02.842795+00:00",
+    "approved_by": "system"
+  }
+]

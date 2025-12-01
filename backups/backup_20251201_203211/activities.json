@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "6928a81f82f917f39bd10163",
+    "id": "7955950d-ab0e-4975-99b8-a725a86baa4d",
+    "case_id": "1",
+    "responsible": "teste",
+    "activity": "teste",
+    "time_spent": 0,
+    "notes": "teste",
+    "created_at": "2025-11-27T19:35:59.995068+00:00",
+    "is_current": false
+  }
+]
