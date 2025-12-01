@@ -1,0 +1,12 @@
+{
+  "backup_date": "2025-12-01T20:33:07.222454",
+  "database_name": "test_database",
+  "collections": [
+    "cases",
+    "users",
+    "comments",
+    "notifications",
+    "activities"
+  ],
+  "mongo_url": "mongodb://localhost:27017@***"
+}
