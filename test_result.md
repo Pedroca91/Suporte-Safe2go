@@ -356,10 +356,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All new features testing completed successfully"
+    - "Export/Import/PDF features testing completed successfully"
+    - "All new features fully verified and working"
   stuck_tasks: []
   test_all: false
-  test_priority: "new_features_complete"
+  test_priority: "export_import_pdf_complete"
 
 agent_communication:
     - agent: "testing"
