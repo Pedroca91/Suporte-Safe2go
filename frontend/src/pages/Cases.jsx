@@ -369,19 +369,72 @@ export const Cases = () => {
           <h1 className="page-title" data-testid="cases-title">Chamados</h1>
           <p className="page-subtitle">Gerencie todos os chamados de suporte</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={(open) => {
-          setDialogOpen(open);
-          if (!open) resetForm();
-        }}>
-          <DialogTrigger asChild>
+
+        {isAdmin && (
+          <div className="flex gap-2 flex-wrap">
+            {/* Botões de Export/Import */}
             <Button
-              data-testid="add-case-btn"
-              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg"
+              variant="outline"
+              onClick={() => setSelectMode(!selectMode)}
+              className="flex items-center gap-2"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Chamado
+              <FileText className="w-4 h-4" />
+              {selectMode ? 'Cancelar Seleção' : 'Gerar Relatório PDF'}
             </Button>
-          </DialogTrigger>
+
+            {selectMode && (
+              <Button
+                onClick={generatePDF}
+                className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
+                disabled={selectedCases.length === 0}
+              >
+                <FileText className="w-4 h-4" />
+                Gerar PDF ({selectedCases.length})
+              </Button>
+            )}
+
+            <Button
+              variant="outline"
+              onClick={exportAllCases}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Exportar Todos
+            </Button>
+
+            <label htmlFor="import-file">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={() => fileInputRef.current?.click()}
+                type="button"
+              >
+                <Upload className="w-4 h-4" />
+                Importar
+              </Button>
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={importCases}
+              className="hidden"
+              id="import-file"
+            />
+
+            <Dialog open={dialogOpen} onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (!open) resetForm();
+            }}>
+              <DialogTrigger asChild>
+              <Button
+                data-testid="add-case-btn"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Chamado
+              </Button>
+              </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingCase ? 'Editar Chamado' : 'Novo Chamado'}</DialogTitle>
