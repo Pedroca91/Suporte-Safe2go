@@ -158,6 +158,183 @@ export const Cases = () => {
     }
   };
 
+  // Função para selecionar/desselecionar chamado
+  const toggleCaseSelection = (caseId) => {
+    setSelectedCases(prev => 
+      prev.includes(caseId) 
+        ? prev.filter(id => id !== caseId)
+        : [...prev, caseId]
+    );
+  };
+
+  // Selecionar todos os chamados visíveis
+  const selectAllCases = () => {
+    if (selectedCases.length === filteredCases.length) {
+      setSelectedCases([]);
+    } else {
+      setSelectedCases(filteredCases.map(c => c.id));
+    }
+  };
+
+  // Gerar PDF dos chamados selecionados
+  const generatePDF = () => {
+    if (selectedCases.length === 0) {
+      toast.error('Selecione pelo menos um chamado para gerar o relatório');
+      return;
+    }
+
+    const selectedData = cases.filter(c => selectedCases.includes(c.id));
+    
+    const doc = new jsPDF();
+    
+    // Título
+    doc.setFontSize(18);
+    doc.text('Relatório de Chamados - Safe2Go', 14, 20);
+    
+    doc.setFontSize(11);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 28);
+    doc.text(`Total de chamados: ${selectedData.length}`, 14, 34);
+    
+    // Tabela resumida
+    const tableData = selectedData.map(c => [
+      c.jira_id || c.id.substring(0, 8),
+      c.title.substring(0, 40) + (c.title.length > 40 ? '...' : ''),
+      c.status,
+      c.seguradora || '-',
+      c.responsible || 'Não atribuído',
+      new Date(c.opened_date).toLocaleDateString('pt-BR')
+    ]);
+    
+    doc.autoTable({
+      startY: 40,
+      head: [['ID', 'Título', 'Status', 'Seguradora', 'Responsável', 'Data']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [147, 51, 234] }, // Purple
+      styles: { fontSize: 9 }
+    });
+    
+    // Detalhes de cada chamado
+    let yPos = doc.lastAutoTable.finalY + 15;
+    
+    selectedData.forEach((caseItem, index) => {
+      if (yPos > 250) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.setFontSize(12);
+      doc.setFont(undefined, 'bold');
+      doc.text(`Chamado ${index + 1}: ${caseItem.jira_id || caseItem.id.substring(0, 8)}`, 14, yPos);
+      
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      yPos += 7;
+      
+      doc.text(`Título: ${caseItem.title}`, 14, yPos);
+      yPos += 7;
+      
+      doc.text(`Status: ${caseItem.status}`, 14, yPos);
+      yPos += 7;
+      
+      if (caseItem.seguradora) {
+        doc.text(`Seguradora: ${caseItem.seguradora}`, 14, yPos);
+        yPos += 7;
+      }
+      
+      doc.text(`Responsável: ${caseItem.responsible || 'Não atribuído'}`, 14, yPos);
+      yPos += 7;
+      
+      doc.text(`Data de abertura: ${new Date(caseItem.opened_date).toLocaleString('pt-BR')}`, 14, yPos);
+      yPos += 7;
+      
+      // Descrição com quebra de linha
+      const descLines = doc.splitTextToSize(`Descrição: ${caseItem.description}`, 180);
+      doc.text(descLines, 14, yPos);
+      yPos += (descLines.length * 5) + 10;
+    });
+    
+    // Salvar PDF
+    doc.save(`chamados_safe2go_${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success(`PDF gerado com ${selectedData.length} chamado(s)!`);
+    setSelectMode(false);
+    setSelectedCases([]);
+  };
+
+  // Exportar todos os chamados em JSON
+  const exportAllCases = () => {
+    const dataToExport = {
+      export_date: new Date().toISOString(),
+      total_cases: cases.length,
+      cases: cases
+    };
+    
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `chamados_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`${cases.length} chamados exportados com sucesso!`);
+  };
+
+  // Importar chamados de JSON
+  const importCases = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      
+      if (!data.cases || !Array.isArray(data.cases)) {
+        toast.error('Arquivo inválido! Formato esperado não encontrado.');
+        return;
+      }
+      
+      const token = localStorage.getItem('token');
+      let successCount = 0;
+      let errorCount = 0;
+      
+      toast.info(`Importando ${data.cases.length} chamados...`);
+      
+      for (const caseData of data.cases) {
+        try {
+          // Verificar se já existe pelo jira_id
+          const existing = cases.find(c => c.jira_id === caseData.jira_id);
+          
+          if (!existing) {
+            await axios.post(`${API}/cases`, caseData, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            successCount++;
+          } else {
+            errorCount++; // Já existe, pular
+          }
+        } catch (err) {
+          errorCount++;
+          console.error('Erro ao importar caso:', err);
+        }
+      }
+      
+      toast.success(`Importação concluída! ${successCount} novos, ${errorCount} ignorados.`);
+      fetchCases();
+      
+      // Limpar input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+    } catch (error) {
+      console.error('Erro ao importar:', error);
+      toast.error('Erro ao processar arquivo JSON');
+    }
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm('Tem certeza que deseja deletar este caso?')) {
       try {
