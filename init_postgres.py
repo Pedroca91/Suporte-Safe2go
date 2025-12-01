@@ -17,10 +17,14 @@ async def init_database():
     postgres_url = os.environ['POSTGRES_URL']
     
     print("🔧 Conectando ao PostgreSQL...")
+    print(f"📡 URL: {postgres_url[:50]}...")
     
     try:
-        # Conectar ao banco
-        conn = await asyncpg.connect(postgres_url)
+        # Conectar ao banco com SSL
+        conn = await asyncpg.connect(
+            postgres_url,
+            ssl='require'
+        )
         
         print("✅ Conectado com sucesso!")
         
