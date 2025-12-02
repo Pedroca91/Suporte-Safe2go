@@ -553,18 +553,20 @@ export const Cases = () => {
                 className="flex items-center gap-2"
                 onClick={() => fileInputRef.current?.click()}
                 type="button"
+                disabled={ocrProcessing}
               >
                 <Upload className="w-4 h-4" />
-                Importar
+                {ocrProcessing ? 'Processando...' : 'Importar'}
               </Button>
             </label>
             <input
               ref={fileInputRef}
               type="file"
-              accept=".json"
+              accept=".json,image/*"
               onChange={importCases}
               className="hidden"
               id="import-file"
+              disabled={ocrProcessing}
             />
 
             <Dialog open={dialogOpen} onOpenChange={(open) => {
