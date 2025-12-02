@@ -335,84 +335,145 @@ export const Cases = () => {
 
   // Parser de texto para extrair chamados
   const parseTextToCases = (text) => {
+    console.log('🔍 Iniciando parse do texto OCR...');
+    console.log('📝 Texto completo (primeiros 500 chars):', text.substring(0, 500));
+    
     const cases = [];
     const lines = text.split('\n').filter(line => line.trim());
     
-    // Tentar identificar padrão de tabela
-    // Formato esperado: ID | Título | Status | Seguradora | Responsável | Data
+    console.log(`📊 Total de linhas: ${lines.length}`);
     
-    let currentCase = {};
+    // Padrões melhorados para IDs de casos Jira
+    const jiraIdPatterns = [
+      /\b(SGSS[-\s]?N?\d+)\b/i,           // SGSS-N012, SGSS N012, SGSS-0012
+      /\b([A-Z]{2,5}[-\s]\d{3,6})\b/i,    // WEB-732303, etc
+      /\b([A-Z]+\d+[-\s]\d+)\b/i,         // Outros padrões
+    ];
+    
+    let currentCase = null;
+    let lineBuffer = '';
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
+      if (!line || line.length < 3) continue;
       
-      // Procurar por ID (padrão: letras-números ou só números)
-      const idMatch = line.match(/^([A-Z]+-\d+|S\d+-\d+|\d+)/);
-      if (idMatch) {
-        // Se já temos um caso em progresso, salvar
-        if (currentCase.jira_id) {
+      // Tentar encontrar ID do Jira
+      let foundId = null;
+      for (const pattern of jiraIdPatterns) {
+        const match = line.match(pattern);
+        if (match) {
+          foundId = match[1].replace(/\s/g, '-').toUpperCase();
+          break;
+        }
+      }
+      
+      if (foundId) {
+        // Salvar caso anterior se existir
+        if (currentCase && currentCase.jira_id && currentCase.title) {
           cases.push(currentCase);
+          console.log(`✅ Caso encontrado: ${currentCase.jira_id} - ${currentCase.title.substring(0, 50)}`);
         }
         
-        // Iniciar novo caso
+        // Extrair título (tudo depois do ID na mesma linha)
+        let title = line.replace(foundId, '').trim();
+        // Remover caracteres especiais e múltiplos espaços
+        title = title.replace(/[|]/g, ' ').replace(/\s{2,}/g, ' ').trim();
+        
+        // Se não tem título na mesma linha, pegar próxima linha
+        if (!title && i + 1 < lines.length) {
+          title = lines[i + 1].trim();
+          i++; // Pular próxima linha já que usamos ela
+        }
+        
+        // Detectar status na linha
+        let status = 'Pendente';
+        if (/aguardando\s*suporte/i.test(line)) {
+          status = 'Aguardando resposta do cliente';
+        } else if (/em\s*atendimento/i.test(line)) {
+          status = 'Em Desenvolvimento';
+        } else if (/conclu[íi]do/i.test(line)) {
+          status = 'Concluído';
+        }
+        
+        // Detectar responsável
+        let responsible = user?.name || 'Não atribuído';
+        const namePatterns = [
+          /(?:Lucas|Valentim|Pedro|João|Maria)\s+[A-Za-zÀ-ÿ\s]+/i
+        ];
+        for (const pattern of namePatterns) {
+          const nameMatch = line.match(pattern);
+          if (nameMatch) {
+            responsible = nameMatch[0].trim();
+            break;
+          }
+        }
+        
+        // Detectar organização/categoria
+        let category = null;
+        if (/DAIG|AIPEAT|AVLA|ESSOR|DAYCOVAL/i.test(line)) {
+          const catMatch = line.match(/DAIG|AIPEAT|AVLA|ESSOR|DAYCOVAL/i);
+          if (catMatch) category = catMatch[0].toUpperCase();
+        }
+        
         currentCase = {
-          jira_id: idMatch[1],
-          title: '',
-          description: 'Importado via OCR',
-          status: 'Pendente',
-          responsible: user?.name || 'Não atribuído',
-          seguradora: null,
-          category: null,
+          jira_id: foundId,
+          title: title || 'Sem título',
+          description: `Importado via OCR da imagem`,
+          status: status,
+          responsible: responsible,
+          seguradora: category || null,
+          category: category || null,
           priority: 'Média'
         };
         
-        // Tentar extrair título da mesma linha
-        const restOfLine = line.replace(idMatch[0], '').trim();
-        if (restOfLine) {
-          currentCase.title = restOfLine.split(/\s{2,}|\|/)[0].trim();
+      } else if (currentCase && line.length > 10) {
+        // Acumular informações adicionais para o caso atual
+        
+        // Se ainda não tem título bom, atualizar
+        if (currentCase.title === 'Sem título' || currentCase.title.length < 10) {
+          currentCase.title = line.substring(0, 200);
         }
-      } else if (currentCase.jira_id && !currentCase.title && line.length > 5) {
-        // Próxima linha pode ser o título
-        currentCase.title = line;
-      } else if (currentCase.jira_id && line.length > 20) {
-        // Pode ser descrição
-        if (currentCase.description === 'Importado via OCR') {
-          currentCase.description = line;
-        } else {
-          currentCase.description += ' ' + line;
+        
+        // Atualizar descrição com mais contexto
+        if (currentCase.description === 'Importado via OCR da imagem') {
+          currentCase.description = line.substring(0, 500);
         }
-      }
-      
-      // Detectar status
-      if (/pendente|aguardando|desenvolvimento|conclu[íi]do/i.test(line)) {
-        if (currentCase.jira_id) {
-          if (/conclu[íi]do/i.test(line)) currentCase.status = 'Concluído';
-          else if (/desenvolvimento/i.test(line)) currentCase.status = 'Em Desenvolvimento';
-          else if (/aguardando/i.test(line)) currentCase.status = 'Aguardando resposta do cliente';
-          else currentCase.status = 'Pendente';
-        }
-      }
-      
-      // Detectar seguradora
-      if (/AVLA|ESSOR|DAYCOVAL/i.test(line)) {
-        if (currentCase.jira_id) {
-          const segMatch = line.match(/AVLA|ESSOR|DAYCOVAL/i);
-          if (segMatch) currentCase.seguradora = segMatch[0].toUpperCase();
+        
+        // Buscar status se ainda não encontrou
+        if (currentCase.status === 'Pendente') {
+          if (/aguardando\s*suporte/i.test(line)) {
+            currentCase.status = 'Aguardando resposta do cliente';
+          } else if (/em\s*atendimento/i.test(line)) {
+            currentCase.status = 'Em Desenvolvimento';
+          }
         }
       }
     }
     
     // Adicionar último caso
-    if (currentCase.jira_id) {
+    if (currentCase && currentCase.jira_id && currentCase.title && currentCase.title !== 'Sem título') {
       cases.push(currentCase);
+      console.log(`✅ Caso encontrado: ${currentCase.jira_id} - ${currentCase.title.substring(0, 50)}`);
     }
     
+    console.log(`📊 Total de casos extraídos: ${cases.length}`);
+    
     // Validar e limpar casos
-    return cases.filter(c => c.jira_id && c.title).map(c => ({
+    const validCases = cases.filter(c => {
+      const isValid = c.jira_id && c.title && c.title !== 'Sem título' && c.title.length >= 5;
+      if (!isValid) {
+        console.warn(`⚠️ Caso inválido removido: ${c.jira_id}`);
+      }
+      return isValid;
+    }).map(c => ({
       ...c,
-      title: c.title.substring(0, 200), // Limitar tamanho
-      description: c.description.substring(0, 500)
+      title: c.title.substring(0, 200).trim(),
+      description: c.description.substring(0, 500).trim()
     }));
+    
+    console.log(`✅ Casos válidos finais: ${validCases.length}`);
+    
+    return validCases;
   };
 
   // Importar chamados de JSON ou Imagem
