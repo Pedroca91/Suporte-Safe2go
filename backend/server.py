@@ -823,8 +823,13 @@ async def get_similar_cases(case_id: str, limit: int = 5):
         
         if total_score > 0:
             # Convert datetime fields
-            if isinstance(other_case.get('opened_date'), str):
+            # Handle opened_date if exists (backwards compatibility)
+            if other_case.get('opened_date') and isinstance(other_case.get('opened_date'), str):
                 other_case['opened_date'] = datetime.fromisoformat(other_case['opened_date'])
+            # Use created_at as opened_date if opened_date doesn't exist
+            elif not other_case.get('opened_date') and other_case.get('created_at'):
+                other_case['opened_date'] = datetime.fromisoformat(other_case['created_at']) if isinstance(other_case['created_at'], str) else other_case['created_at']
+            
             if other_case.get('closed_date') and isinstance(other_case['closed_date'], str):
                 other_case['closed_date'] = datetime.fromisoformat(other_case['closed_date'])
             if isinstance(other_case.get('created_at'), str):
