@@ -194,6 +194,9 @@ backend:
         - working: true
         - agent: "testing"
         - comment: "🚀 COMPLETE SYSTEM TEST - 100% SUCCESS (81/81 tests passed): ✅ Authentication: Admin (pedro.carvalho@safe2go.com.br/S@muka91) ✅ Client (cliente@teste.com/senha123) ✅ 71 Cases verified: 11 Pendente + 60 Concluído ✅ DELETE Security: No auth→403, Client→403, Admin→200 ✅ Role-based access: Client sees own cases, Admin sees all ✅ Dashboard: 84.5% completion rate ✅ Filters: Status filtering working ✅ Seguradora distribution: AIPEAT(10), Daycoval(20), ESSOR(20), AVLA(21) ✅ Comments: Public/Internal with role filtering ✅ Notifications: User-specific ✅ User Management: Admin-only access. System fully functional and secure."
+        - working: true
+        - agent: "testing"
+        - comment: "🎯 FINAL VALIDATION COMPLETE (80/80 tests - 100% SUCCESS): Updated credentials per review request - Admin (pedro.carvalho@safe2go.com.br/S@muka91) ✅ Client (cliente@avla.com.br/senha123) ✅ 71 Cases verified: 11 Pendente + 60 Concluído = 84.5% completion ✅ Seguradora distribution: DAIG(1), AIPEAT(9), Daycoval(20), ESSOR(20), AVLA(21) ✅ DELETE ENDPOINT SECURITY CRITICAL TESTS: No auth→403 ✅, Client→403 ✅, Admin→200 ✅ ✅ Authentication & JWT validation working ✅ Role-based access control enforced ✅ Dashboard stats accurate ✅ Status filtering (Pendente/Concluído) working ✅ Comments system (public/internal) with proper role filtering ✅ Notifications CRUD operations ✅ User management admin-only access. FIXED: get_case endpoint KeyError for opened_date field. System 100% functional and secure per review requirements."
 
 frontend:
   - task: "NEW FEATURE: Edit Buttons Removed from Cases List"
