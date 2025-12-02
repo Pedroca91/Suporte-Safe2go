@@ -487,7 +487,16 @@ export const Cases = () => {
       
     } catch (error) {
       console.error('Erro ao importar:', error);
-      toast.error('Erro ao processar arquivo JSON');
+      if (error instanceof SyntaxError) {
+        toast.error('Erro ao processar JSON! Verifique se o arquivo está em formato JSON válido.');
+      } else {
+        toast.error('Erro ao processar arquivo: ' + error.message);
+      }
+    } finally {
+      // Limpar input em caso de erro também
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
