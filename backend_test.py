@@ -170,7 +170,7 @@ class Safe2GoHelpdeskTester:
     # ========== CASES TESTS ==========
     
     def test_get_cases_admin(self):
-        """Test GET /cases as admin (should see all cases)"""
+        """Test GET /cases as admin (should see all 71 cases)"""
         if not self.admin_token:
             self.log_test("Get Cases (Admin)", False, "No admin token available")
             return False
@@ -180,6 +180,40 @@ class Safe2GoHelpdeskTester:
         if success and isinstance(response, list):
             self.log_test("Get Cases (Admin) - List returned", True)
             print(f"    Admin sees {len(response)} cases")
+            
+            # Verify expected 71 cases (11 pending + 60 completed)
+            if len(response) == 71:
+                self.log_test("Get Cases (Admin) - 71 cases verification", True)
+            else:
+                self.log_test("Get Cases (Admin) - 71 cases verification", False, f"Expected 71 cases, got {len(response)}")
+            
+            # Count by status
+            pending_count = len([c for c in response if c.get('status') == 'Pendente'])
+            completed_count = len([c for c in response if c.get('status') == 'Concluído'])
+            
+            print(f"    Pendente: {pending_count}, Concluído: {completed_count}")
+            
+            # Verify status distribution (11 pending, 60 completed)
+            if pending_count == 11:
+                self.log_test("Get Cases (Admin) - 11 pending cases", True)
+            else:
+                self.log_test("Get Cases (Admin) - 11 pending cases", False, f"Expected 11 pending, got {pending_count}")
+                
+            if completed_count == 60:
+                self.log_test("Get Cases (Admin) - 60 completed cases", True)
+            else:
+                self.log_test("Get Cases (Admin) - 60 completed cases", False, f"Expected 60 completed, got {completed_count}")
+            
+            # Count by seguradora
+            daycoval_count = len([c for c in response if c.get('seguradora') == 'DAYCOVAL'])
+            essor_count = len([c for c in response if c.get('seguradora') == 'ESSOR'])
+            avla_count = len([c for c in response if c.get('seguradora') == 'AVLA'])
+            
+            print(f"    DAYCOVAL: {daycoval_count}, ESSOR: {essor_count}, AVLA: {avla_count}")
+            
+            # Store first case ID for DELETE tests
+            if response:
+                self.test_case_id_for_delete = response[0].get('id')
         
         return success
 
