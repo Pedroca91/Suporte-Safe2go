@@ -970,7 +970,8 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     total = await db.cases.count_documents(base_query)
     completed = await db.cases.count_documents({**base_query, "status": "Concluído"})
     pending = await db.cases.count_documents({**base_query, "status": "Pendente"})
-    waiting_client = await db.cases.count_documents({**base_query, "status": "Aguardando resposta do cliente"})
+    in_development = await db.cases.count_documents({**base_query, "status": "Em Desenvolvimento"})
+    waiting_client = await db.cases.count_documents({**base_query, "status": "Aguardando resposta"})
     
     percentage = (completed / total * 100) if total > 0 else 0
     
@@ -987,6 +988,7 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
         total_cases=total,
         completed_cases=completed,
         pending_cases=pending,
+        in_development_cases=in_development,
         waiting_client_cases=waiting_client,
         completion_percentage=round(percentage, 1),
         cases_by_seguradora=cases_by_seguradora
