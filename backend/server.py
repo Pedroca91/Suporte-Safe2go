@@ -674,17 +674,22 @@ async def get_cases(
         query['status'] = status
     if days:
         date_limit = datetime.now(timezone.utc) - timedelta(days=days)
-        query['opened_date'] = {"$gte": date_limit.isoformat()}
+        query['created_at'] = {"$gte": date_limit.isoformat()}
     
-    cases = await db.cases.find(query, {"_id": 0}).sort("opened_date", -1).to_list(1000)
+    cases = await db.cases.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
     
     # Convert ISO string timestamps back to datetime
     for case in cases:
-        if isinstance(case['opened_date'], str):
+        # Handle opened_date if exists (backwards compatibility)
+        if case.get('opened_date') and isinstance(case['opened_date'], str):
             case['opened_date'] = datetime.fromisoformat(case['opened_date'])
+        # Use created_at as opened_date if opened_date doesn't exist
+        elif not case.get('opened_date') and case.get('created_at'):
+            case['opened_date'] = datetime.fromisoformat(case['created_at']) if isinstance(case['created_at'], str) else case['created_at']
+        
         if case.get('closed_date') and isinstance(case['closed_date'], str):
             case['closed_date'] = datetime.fromisoformat(case['closed_date'])
-        if isinstance(case['created_at'], str):
+        if isinstance(case.get('created_at', ''), str):
             case['created_at'] = datetime.fromisoformat(case['created_at'])
     
     return cases
