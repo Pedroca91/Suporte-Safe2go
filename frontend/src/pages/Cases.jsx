@@ -204,7 +204,7 @@ export const Cases = () => {
       c.status,
       c.seguradora || '-',
       c.responsible || 'Não atribuído',
-      new Date(c.opened_date).toLocaleDateString('pt-BR')
+      new Date(c.created_at).toLocaleDateString('pt-BR')
     ]);
     
     doc.autoTable({
