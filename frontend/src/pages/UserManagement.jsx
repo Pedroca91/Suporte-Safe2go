@@ -326,6 +326,133 @@ export const UserManagement = () => {
           ))}
         </div>
       )}
+
+      {/* Modal de Edição de Usuário */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit className="w-5 h-5" />
+              Editar Usuário
+            </DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Nome */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome Completo *
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.name}
+                  onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
+
+              {/* Telefone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Telefone
+                </label>
+                <input
+                  type="tel"
+                  value={editFormData.phone}
+                  onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="(11) 99999-9999"
+                />
+              </div>
+
+              {/* Empresa/Seguradora */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Empresa/Seguradora
+                </label>
+                <select
+                  value={editFormData.company}
+                  onChange={(e) => setEditFormData({ ...editFormData, company: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option value="">Selecione...</option>
+                  <option value="AVLA">AVLA</option>
+                  <option value="ESSOR">ESSOR</option>
+                  <option value="Daycoval">Daycoval</option>
+                  <option value="Safe2Go">Safe2Go</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+
+              {/* Role */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tipo de Usuário *
+                </label>
+                <select
+                  value={editFormData.role}
+                  onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                >
+                  <option value="cliente">👤 Cliente</option>
+                  <option value="administrador">👑 Administrador</option>
+                </select>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status *
+                </label>
+                <select
+                  value={editFormData.status}
+                  onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                >
+                  <option value="pendente">🟡 Pendente</option>
+                  <option value="aprovado">🟢 Aprovado</option>
+                  <option value="rejeitado">🔴 Rejeitado</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Salvar Alterações
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
