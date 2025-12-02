@@ -284,11 +284,154 @@ export const Cases = () => {
     toast.success(`${cases.length} chamados exportados com sucesso!`);
   };
 
-  // Importar chamados de JSON
+  // Processar imagem com OCR
+  const processImageWithOCR = async (file) => {
+    setOcrProcessing(true);
+    toast.info('🔍 Processando imagem com OCR... Aguarde...');
+    
+    try {
+      const worker = await createWorker('por');
+      const { data: { text } } = await worker.recognize(file);
+      await worker.terminate();
+      
+      console.log('Texto extraído:', text);
+      
+      // Processar texto extraído e criar chamados
+      const extractedCases = parseTextToCases(text);
+      
+      if (extractedCases.length === 0) {
+        toast.error('Nenhum chamado identificado na imagem. Tente uma imagem mais clara ou use JSON.');
+        setOcrProcessing(false);
+        return;
+      }
+      
+      // Criar chamados extraídos
+      const token = localStorage.getItem('token');
+      let successCount = 0;
+      
+      toast.info(`Encontrados ${extractedCases.length} chamado(s) na imagem. Criando...`);
+      
+      for (const caseData of extractedCases) {
+        try {
+          await axios.post(`${API}/cases`, caseData, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          successCount++;
+        } catch (err) {
+          console.error('Erro ao criar caso da imagem:', err);
+        }
+      }
+      
+      toast.success(`✅ ${successCount} chamado(s) criado(s) da imagem!`);
+      fetchCases();
+      
+    } catch (error) {
+      console.error('Erro no OCR:', error);
+      toast.error('Erro ao processar imagem. Tente novamente ou use JSON.');
+    } finally {
+      setOcrProcessing(false);
+    }
+  };
+
+  // Parser de texto para extrair chamados
+  const parseTextToCases = (text) => {
+    const cases = [];
+    const lines = text.split('\n').filter(line => line.trim());
+    
+    // Tentar identificar padrão de tabela
+    // Formato esperado: ID | Título | Status | Seguradora | Responsável | Data
+    
+    let currentCase = {};
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // Procurar por ID (padrão: letras-números ou só números)
+      const idMatch = line.match(/^([A-Z]+-\d+|S\d+-\d+|\d+)/);
+      if (idMatch) {
+        // Se já temos um caso em progresso, salvar
+        if (currentCase.jira_id) {
+          cases.push(currentCase);
+        }
+        
+        // Iniciar novo caso
+        currentCase = {
+          jira_id: idMatch[1],
+          title: '',
+          description: 'Importado via OCR',
+          status: 'Pendente',
+          responsible: user?.name || 'Não atribuído',
+          seguradora: null,
+          category: null,
+          priority: 'Média'
+        };
+        
+        // Tentar extrair título da mesma linha
+        const restOfLine = line.replace(idMatch[0], '').trim();
+        if (restOfLine) {
+          currentCase.title = restOfLine.split(/\s{2,}|\|/)[0].trim();
+        }
+      } else if (currentCase.jira_id && !currentCase.title && line.length > 5) {
+        // Próxima linha pode ser o título
+        currentCase.title = line;
+      } else if (currentCase.jira_id && line.length > 20) {
+        // Pode ser descrição
+        if (currentCase.description === 'Importado via OCR') {
+          currentCase.description = line;
+        } else {
+          currentCase.description += ' ' + line;
+        }
+      }
+      
+      // Detectar status
+      if (/pendente|aguardando|desenvolvimento|conclu[íi]do/i.test(line)) {
+        if (currentCase.jira_id) {
+          if (/conclu[íi]do/i.test(line)) currentCase.status = 'Concluído';
+          else if (/desenvolvimento/i.test(line)) currentCase.status = 'Em Desenvolvimento';
+          else if (/aguardando/i.test(line)) currentCase.status = 'Aguardando resposta do cliente';
+          else currentCase.status = 'Pendente';
+        }
+      }
+      
+      // Detectar seguradora
+      if (/AVLA|ESSOR|DAYCOVAL/i.test(line)) {
+        if (currentCase.jira_id) {
+          const segMatch = line.match(/AVLA|ESSOR|DAYCOVAL/i);
+          if (segMatch) currentCase.seguradora = segMatch[0].toUpperCase();
+        }
+      }
+    }
+    
+    // Adicionar último caso
+    if (currentCase.jira_id) {
+      cases.push(currentCase);
+    }
+    
+    // Validar e limpar casos
+    return cases.filter(c => c.jira_id && c.title).map(c => ({
+      ...c,
+      title: c.title.substring(0, 200), // Limitar tamanho
+      description: c.description.substring(0, 500)
+    }));
+  };
+
+  // Importar chamados de JSON ou Imagem
   const importCases = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
     
+    // Verificar se é imagem
+    if (file.type.startsWith('image/')) {
+      await processImageWithOCR(file);
+      
+      // Limpar input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+    
+    // Processar JSON
     try {
       const text = await file.text();
       const data = JSON.parse(text);
