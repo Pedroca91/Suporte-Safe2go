@@ -442,7 +442,13 @@ export const Cases = () => {
       const data = JSON.parse(text);
       
       if (!data.cases || !Array.isArray(data.cases)) {
-        toast.error('Arquivo inválido! Formato esperado não encontrado.');
+        toast.error('Arquivo JSON inválido! O arquivo deve conter um objeto com a propriedade "cases" contendo um array de chamados.');
+        console.error('Estrutura do arquivo:', data);
+        return;
+      }
+      
+      if (data.cases.length === 0) {
+        toast.warning('Nenhum chamado encontrado no arquivo JSON.');
         return;
       }
       
