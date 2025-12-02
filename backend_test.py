@@ -295,8 +295,8 @@ class Safe2GoHelpdeskTester:
             self.log_test("Delete Case (No Auth)", False, "No case ID available for testing")
             return False
         
-        # Test without any token
-        success, response = self.run_test("Delete Case (No Auth)", "DELETE", f"cases/{self.test_case_id_for_delete}", 401)
+        # Test without any token (FastAPI returns 403 for missing auth)
+        success, response = self.run_test("Delete Case (No Auth)", "DELETE", f"cases/{self.test_case_id_for_delete}", 403)
         
         if success:
             self.log_test("Delete Case (No Auth) - Properly denied", True)
