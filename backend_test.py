@@ -286,6 +286,159 @@ class Safe2GoHelpdeskTester:
         
         return success
 
+    # ========== DELETE ENDPOINT SECURITY TESTS (CRITICAL) ==========
+    
+    def test_delete_case_no_auth(self):
+        """Test DELETE /cases/:id without authentication (should return 401/403)"""
+        if not hasattr(self, 'test_case_id_for_delete') or not self.test_case_id_for_delete:
+            self.log_test("Delete Case (No Auth)", False, "No case ID available for testing")
+            return False
+        
+        # Test without any token
+        success, response = self.run_test("Delete Case (No Auth)", "DELETE", f"cases/{self.test_case_id_for_delete}", 401)
+        
+        if success:
+            self.log_test("Delete Case (No Auth) - Properly denied", True)
+        
+        return success
+
+    def test_delete_case_client_forbidden(self):
+        """Test DELETE /cases/:id with client token (should return 403)"""
+        if not hasattr(self, 'test_case_id_for_delete') or not self.test_case_id_for_delete or not self.client_token:
+            self.log_test("Delete Case (Client Forbidden)", False, "Missing case ID or client token")
+            return False
+        
+        success, response = self.run_test("Delete Case (Client Forbidden)", "DELETE", f"cases/{self.test_case_id_for_delete}", 403, token=self.client_token)
+        
+        if success:
+            self.log_test("Delete Case (Client) - Access properly denied", True)
+        
+        return success
+
+    def test_delete_case_admin_success(self):
+        """Test DELETE /cases/:id with admin token (should return 200)"""
+        if not hasattr(self, 'test_case_id_for_delete') or not self.test_case_id_for_delete or not self.admin_token:
+            self.log_test("Delete Case (Admin Success)", False, "Missing case ID or admin token")
+            return False
+        
+        # First verify the case exists
+        success_get, response_get = self.run_test("Delete Case (Admin) - Verify exists", "GET", f"cases/{self.test_case_id_for_delete}", 200)
+        
+        if not success_get:
+            self.log_test("Delete Case (Admin Success)", False, "Case doesn't exist for deletion test")
+            return False
+        
+        # Now delete it
+        success, response = self.run_test("Delete Case (Admin Success)", "DELETE", f"cases/{self.test_case_id_for_delete}", 200, token=self.admin_token)
+        
+        if success:
+            self.log_test("Delete Case (Admin) - Successfully deleted", True)
+            
+            # Verify case is actually deleted
+            success_verify, response_verify = self.run_test("Delete Case (Admin) - Verify deleted", "GET", f"cases/{self.test_case_id_for_delete}", 404)
+            
+            if success_verify:
+                self.log_test("Delete Case (Admin) - Deletion verified", True)
+            else:
+                self.log_test("Delete Case (Admin) - Deletion verified", False, "Case still exists after deletion")
+        
+        return success
+
+    # ========== DASHBOARD TESTS ==========
+    
+    def test_dashboard_stats(self):
+        """Test GET /dashboard/stats"""
+        if not self.admin_token:
+            self.log_test("Dashboard Stats", False, "No admin token available")
+            return False
+        
+        success, response = self.run_test("Dashboard Stats", "GET", "dashboard/stats", 200, token=self.admin_token)
+        
+        if success:
+            required_fields = ['total_cases', 'completed_cases', 'pending_cases', 'completion_percentage', 'cases_by_seguradora']
+            for field in required_fields:
+                if field not in response:
+                    self.log_test(f"Dashboard Stats - {field} field", False, f"Missing field: {field}")
+                    return False
+            
+            self.log_test("Dashboard Stats - All fields present", True)
+            
+            # Print stats for verification
+            print(f"    Total cases: {response.get('total_cases')}")
+            print(f"    Completed: {response.get('completed_cases')}")
+            print(f"    Pending: {response.get('pending_cases')}")
+            print(f"    Completion %: {response.get('completion_percentage')}")
+            print(f"    By seguradora: {response.get('cases_by_seguradora')}")
+        
+        return success
+
+    def test_filters_by_status(self):
+        """Test GET /cases with status filters"""
+        if not self.admin_token:
+            self.log_test("Filter by Status", False, "No admin token available")
+            return False
+        
+        # Test filter by Pendente
+        success_pending, response_pending = self.run_test("Filter Cases (Pendente)", "GET", "cases", 200, 
+                                                         params={"status": "Pendente"}, token=self.admin_token)
+        
+        if success_pending and isinstance(response_pending, list):
+            pending_count = len(response_pending)
+            print(f"    Filtered Pendente: {pending_count} cases")
+            
+            # Verify all returned cases have Pendente status
+            all_pending = all(case.get('status') == 'Pendente' for case in response_pending)
+            if all_pending:
+                self.log_test("Filter Cases (Pendente) - Correct filtering", True)
+            else:
+                self.log_test("Filter Cases (Pendente) - Correct filtering", False, "Non-pending cases in results")
+        
+        # Test filter by Concluído
+        success_completed, response_completed = self.run_test("Filter Cases (Concluído)", "GET", "cases", 200, 
+                                                            params={"status": "Concluído"}, token=self.admin_token)
+        
+        if success_completed and isinstance(response_completed, list):
+            completed_count = len(response_completed)
+            print(f"    Filtered Concluído: {completed_count} cases")
+            
+            # Verify all returned cases have Concluído status
+            all_completed = all(case.get('status') == 'Concluído' for case in response_completed)
+            if all_completed:
+                self.log_test("Filter Cases (Concluído) - Correct filtering", True)
+            else:
+                self.log_test("Filter Cases (Concluído) - Correct filtering", False, "Non-completed cases in results")
+        
+        return success_pending and success_completed
+
+    def test_filters_by_seguradora(self):
+        """Test GET /cases with seguradora filters"""
+        if not self.admin_token:
+            self.log_test("Filter by Seguradora", False, "No admin token available")
+            return False
+        
+        seguradoras = ['DAYCOVAL', 'ESSOR', 'AVLA']
+        all_success = True
+        
+        for seguradora in seguradoras:
+            success, response = self.run_test(f"Filter Cases ({seguradora})", "GET", "cases", 200, 
+                                            params={"seguradora": seguradora}, token=self.admin_token)
+            
+            if success and isinstance(response, list):
+                count = len(response)
+                print(f"    Filtered {seguradora}: {count} cases")
+                
+                # Verify all returned cases have correct seguradora
+                all_correct = all(case.get('seguradora') == seguradora for case in response)
+                if all_correct:
+                    self.log_test(f"Filter Cases ({seguradora}) - Correct filtering", True)
+                else:
+                    self.log_test(f"Filter Cases ({seguradora}) - Correct filtering", False, f"Wrong seguradora in results")
+                    all_success = False
+            else:
+                all_success = False
+        
+        return all_success
+
     # ========== COMMENTS TESTS ==========
     
     def test_create_public_comment(self):
