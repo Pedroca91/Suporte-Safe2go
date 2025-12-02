@@ -447,8 +447,15 @@ export const Cases = () => {
     
     // Processar JSON
     try {
+      console.log('📄 Processando como arquivo JSON');
       const text = await file.text();
+      console.log('📝 Conteúdo do arquivo (primeiros 200 chars):', text.substring(0, 200));
       const data = JSON.parse(text);
+      console.log('✅ JSON parseado com sucesso:', {
+        hasCases: !!data.cases,
+        casesCount: data.cases?.length,
+        structure: Object.keys(data)
+      });
       
       if (!data.cases || !Array.isArray(data.cases)) {
         toast.error('Arquivo JSON inválido! O arquivo deve conter um objeto com a propriedade "cases" contendo um array de chamados.');
