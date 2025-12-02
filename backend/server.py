@@ -942,9 +942,10 @@ async def get_chart_data(current_user: dict = Depends(get_current_user)):
         end_date = start_date + timedelta(days=1)
         
         # Count completed and pending cases for this day
+        # Usar created_at ao invés de opened_date
         completed = await db.cases.count_documents({
             **base_query,
-            "opened_date": {
+            "created_at": {
                 "$gte": start_date.isoformat(),
                 "$lt": end_date.isoformat()
             },
@@ -953,7 +954,7 @@ async def get_chart_data(current_user: dict = Depends(get_current_user)):
         
         pending = await db.cases.count_documents({
             **base_query,
-            "opened_date": {
+            "created_at": {
                 "$gte": start_date.isoformat(),
                 "$lt": end_date.isoformat()
             },
