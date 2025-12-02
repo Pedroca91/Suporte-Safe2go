@@ -121,12 +121,6 @@ class Safe2GoHelpdeskTester:
         """Test client login with cliente@teste.com"""
         success, response = self.run_test("Client Login", "POST", "auth/login", 200, self.client_credentials)
         
-        if not success:
-            # Try alternative password
-            alt_credentials = self.client_credentials.copy()
-            alt_credentials["password"] = "cliente123"
-            success, response = self.run_test("Client Login (alt password)", "POST", "auth/login", 200, alt_credentials)
-        
         if success and 'token' in response and 'user' in response:
             self.client_token = response['token']
             self.client_user = response['user']
