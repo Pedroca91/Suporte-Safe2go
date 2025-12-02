@@ -466,6 +466,46 @@ async def update_user(
     
     return User(**updated_user)
 
+@api_router.put("/users/{user_id}", response_model=User)
+async def update_user(
+    user_id: str,
+    user_update: UserUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Atualizar dados de um usuário (Admin only)"""
+    if current_user.get('role') != 'administrador':
+        raise HTTPException(status_code=403, detail="Acesso negado. Apenas administradores.")
+    
+    # Buscar usuário existente
+    existing_user = await db.users.find_one({'id': user_id}, {'_id': 0})
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
+    # Preparar dados para atualização
+    update_dict = {k: v for k, v in user_update.model_dump().items() if v is not None}
+    
+    # Se email está sendo atualizado, verificar se já existe
+    if 'email' in update_dict and update_dict['email'] != existing_user['email']:
+        email_exists = await db.users.find_one({'email': update_dict['email']})
+        if email_exists:
+            raise HTTPException(status_code=400, detail="Este email já está em uso")
+    
+    # Validar role
+    if 'role' in update_dict and update_dict['role'] not in ['cliente', 'administrador']:
+        raise HTTPException(status_code=400, detail="Role inválido. Use 'cliente' ou 'administrador'")
+    
+    # Validar status
+    if 'status' in update_dict and update_dict['status'] not in ['pendente', 'aprovado', 'rejeitado']:
+        raise HTTPException(status_code=400, detail="Status inválido")
+    
+    if update_dict:
+        await db.users.update_one({'id': user_id}, {'$set': update_dict})
+    
+    # Buscar usuário atualizado
+    updated_user = await db.users.find_one({'id': user_id}, {'_id': 0})
+    
+    return User(**updated_user)
+
 @api_router.delete("/users/{user_id}")
 async def delete_user(
     user_id: str,
