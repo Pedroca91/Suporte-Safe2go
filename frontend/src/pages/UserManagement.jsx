@@ -214,6 +214,17 @@ export const UserManagement = () => {
               </>
             )}
             
+            {/* Botão Editar - disponível para todos os usuários */}
+            <Button
+              onClick={() => openEditDialog(user)}
+              variant="outline"
+              className="flex-1 border-blue-300 text-blue-600 hover:bg-blue-50"
+              size="sm"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Editar
+            </Button>
+            
             {user.status !== 'pendente' && (
               <Button
                 onClick={() => handleDelete(user.id)}
