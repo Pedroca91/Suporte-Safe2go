@@ -128,11 +128,14 @@ export const Cases = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      
       if (editingCase) {
-        await axios.put(`${API}/cases/${editingCase.id}`, formData);
+        await axios.put(`${API}/cases/${editingCase.id}`, formData, { headers });
         toast.success('✅ Caso atualizado e salvo no banco de dados!');
       } else {
-        await axios.post(`${API}/cases`, formData);
+        await axios.post(`${API}/cases`, formData, { headers });
         toast.success('Caso criado com sucesso!');
       }
       setDialogOpen(false);
@@ -140,7 +143,7 @@ export const Cases = () => {
       fetchCases();
     } catch (error) {
       console.error('Erro ao salvar caso:', error);
-      toast.error('Erro ao salvar caso');
+      toast.error('Erro ao salvar caso: ' + (error.response?.data?.detail || error.message));
     }
   };
 
