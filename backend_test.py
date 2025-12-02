@@ -15,14 +15,14 @@ class Safe2GoHelpdeskTester:
         self.tests_passed = 0
         self.test_results = []
         
-        # Test credentials
+        # Test credentials - Updated per review request
         self.admin_credentials = {
             "email": "pedro.carvalho@safe2go.com.br",
-            "password": "senha123"  # Will try admin123 if this fails
+            "password": "S@muka91"  # Updated password from review request
         }
         self.client_credentials = {
             "email": "cliente@teste.com", 
-            "password": "senha123"  # Will try cliente123 if this fails
+            "password": "senha123"
         }
         
         # Test data storage
