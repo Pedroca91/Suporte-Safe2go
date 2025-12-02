@@ -443,8 +443,8 @@ export const Cases = () => {
         
         // Detectar organização/categoria
         let category = null;
-        if (/DAIG|AIPEAT|AVLA|ESSOR|DAYCOVAL/i.test(line)) {
-          const catMatch = line.match(/DAIG|AIPEAT|AVLA|ESSOR|DAYCOVAL/i);
+        if (/AVLA|ESSOR|DAYCOVAL/i.test(line)) {
+          const catMatch = line.match(/AVLA|ESSOR|DAYCOVAL/i);
           if (catMatch) category = catMatch[0].toUpperCase();
         }
         
