@@ -33,6 +33,7 @@ class Safe2GoHelpdeskTester:
         self.created_case_id = None
         self.created_comment_id = None
         self.created_notification_id = None
+        self.test_case_id_for_delete = None  # For DELETE endpoint tests
         self.ws_connection = None
         self.ws_messages = []
 
