@@ -206,6 +206,7 @@ class DashboardStats(BaseModel):
     total_cases: int
     completed_cases: int
     pending_cases: int
+    in_development_cases: int
     waiting_client_cases: int
     completion_percentage: float
     cases_by_seguradora: dict = {}
