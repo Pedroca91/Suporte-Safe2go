@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Criar usuário admin: pedro.carvalho@fase2go.com.br
+Criar usuário admin: pedro.carvalho@safe2go.com.br
 """
 
 import asyncio
@@ -27,14 +27,14 @@ async def create_admin():
     print("🔧 Criando usuário administrador...")
     
     # Check if user already exists
-    existing_user = await db.users.find_one({'email': 'pedro.carvalho@fase2go.com.br'})
+    existing_user = await db.users.find_one({'email': 'pedro.carvalho@safe2go.com.br'})
     
     if existing_user:
         print("⚠️  Usuário já existe. Atualizando senha e garantindo role admin...")
         
         # Update existing user
         await db.users.update_one(
-            {'email': 'pedro.carvalho@fase2go.com.br'},
+            {'email': 'pedro.carvalho@safe2go.com.br'},
             {
                 '$set': {
                     'password': hash_password('S@muka91'),
@@ -51,12 +51,12 @@ async def create_admin():
         admin_user = {
             'id': str(uuid.uuid4()),
             'name': 'Pedro Carvalho',
-            'email': 'pedro.carvalho@fase2go.com.br',
+            'email': 'pedro.carvalho@safe2go.com.br',
             'password': hash_password('S@muka91'),
             'role': 'administrador',
             'status': 'aprovado',
             'phone': None,
-            'company': 'Fase2Go',
+            'company': 'Safe2Go',
             'created_at': datetime.now(timezone.utc).isoformat(),
             'approved_at': datetime.now(timezone.utc).isoformat(),
             'approved_by': 'system'
@@ -65,7 +65,7 @@ async def create_admin():
         print("✅ Usuário administrador criado com sucesso!")
     
     client.close()
-    print("\n📧 Email: pedro.carvalho@fase2go.com.br")
+    print("\n📧 Email: pedro.carvalho@safe2go.com.br")
     print("🔑 Senha: S@muka91")
     print("👤 Role: administrador")
     print("✅ Status: aprovado")
