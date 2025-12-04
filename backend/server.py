@@ -1074,6 +1074,7 @@ async def jira_webhook(payload: dict):
             'Closed': 'Concluído',
             'Aguardando Cliente': 'Aguardando resposta do cliente',
             'Waiting for Customer': 'Aguardando resposta do cliente',
+            'Aguardando resposta': 'Aguardando resposta do cliente',
         }
         status = status_map.get(status_jira, 'Pendente')
         
