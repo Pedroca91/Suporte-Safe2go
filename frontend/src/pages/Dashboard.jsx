@@ -322,7 +322,7 @@ export const Dashboard = () => {
             </div>
           </div>
           <p className="text-sm text-gray-600 mb-1">Aguardando</p>
-          <p className="text-3xl font-bold text-orange-600">{stats.waiting_client_cases}</p>
+          <p className="text-3xl font-bold text-orange-600">{stats.waiting_client_cases || 0}</p>
         </div>
 
         <div className="stat-card" data-testid="completion-percentage-card">
