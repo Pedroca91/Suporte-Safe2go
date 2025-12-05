@@ -116,12 +116,12 @@ export const Dashboard = () => {
         yPos += 12;
       });
       
-      // Distribuição por Categoria
-      yPos += 10;
+      // Distribuição por Categoria (com mais espaçamento)
+      yPos += 15;
       pdf.setFontSize(13);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Distribuição por Categoria:', 20, yPos);
-      yPos += 8;
+      yPos += 10;
       
       pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
